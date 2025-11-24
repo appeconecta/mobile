@@ -1,20 +1,20 @@
-@import "tailwindcss/theme.css" layer(theme);
-@theme {
-  --color-primary-100: #c9e2c9;
-  --color-primary-200: #aed296;
-  --color-primary-300: #77b883;
-  --color-primary-400: #4f9d69;
-  --color-primary-500: #346259;
-  --color-primary-600: #26413c;
-  --color-primary: var(--color-primary-500);
-  --color-primary-foreground: #f3f7f4;
-
-  --color-bg-100: #f3f7f4;
-  --color-bg-200: #f6f7eb;
-  --color-bg-300: #e6eada;
-  --color-background: var(--color-bg-100);
-}
 @import "tailwindcss/preflight.css" layer(base);
 @import "tailwindcss/utilities.css";
-
+@import "tailwindcss/theme.css" layer(theme);
 @import "nativewind/theme";
+
+@theme {
+    --color-primary-100: #c9e2c9;
+    --color-primary-200: #aed296;
+    --color-primary-300: #77b883;
+    --color-primary-400: #4f9d69;
+    --color-primary-500: #346259;
+    --color-primary-600: #26413c;
+    --color-primary: var(--color-primary-500);
+    --color-primary-foreground: #f3f7f4;
+
+    --color-bg-100: #f3f7f4;
+    --color-bg-200: #f6f7eb;
+    --color-bg-300: #e6eada;
+    --color-background: var(--color-bg-100);
+}
