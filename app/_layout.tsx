@@ -1,22 +1,29 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
+import { TabList, Tabs, TabSlot, TabTrigger } from 'expo-router/ui';
 
-import 'react-native-reanimated';
+import { TabButton } from '@/components/tab-button';
+import { AppTabList } from '@/components/tab-list';
 import "../global.css";
 
-import { useColorScheme } from '@/hooks/use-color-scheme';
-
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
-
+export default function Layout() {
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        {/* <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} /> */}
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
-  );
+    <Tabs>
+      <TabSlot />
+      <TabList asChild>
+        <AppTabList>
+          <TabTrigger asChild name="community" href="/community">
+            <TabButton />
+          </TabTrigger>
+          <TabTrigger asChild name="reports" href="/reports">
+            <TabButton />
+          </TabTrigger>
+          <TabTrigger asChild name="home" href="/">
+            <TabButton />
+          </TabTrigger>
+          <TabTrigger asChild name="account" href="/account">
+            <TabButton />
+          </TabTrigger>
+        </AppTabList>
+      </TabList>
+    </Tabs>
+  )
 }
