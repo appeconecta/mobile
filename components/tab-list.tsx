@@ -1,11 +1,13 @@
 import { View } from "react-native";
 
-interface TabButtonProps {
-    children?: React.ReactNode;
+interface TabListProps {
+	children?: React.ReactNode;
 }
 
-export function AppTabList({ children }: TabButtonProps) {
-    return <View className="flex flex-row absolute bottom-8 items-center justify-center border border-red-500 p-2 w-full">
-        {children}
-    </View>;
+export function AppTabList({ children }: TabListProps) {
+	return (
+		<View className="bg-primary-400 absolute bottom-0 z-50 flex h-14 w-full flex-row items-end justify-center gap-1 rounded-tl-2xl rounded-tr-2xl px-4">
+			{children}
+		</View>
+	);
 }
