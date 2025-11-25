@@ -1,7 +1,7 @@
 {
 	"expo": {
-		"name": "EConecta",
-		"slug": "EConecta",
+		"name": "econecta",
+		"slug": "econecta",
 		"version": "1.0.0",
 		"orientation": "portrait",
 		"icon": "./assets/images/icon.png",
@@ -23,7 +23,7 @@
 			"package": "com.econecta.android"
 		},
 		"web": {
-			"name": "EConecta",
+			"name": "econecta",
 			"output": "static",
 			"favicon": "./assets/images/favicon.png",
 			"bundler": "metro"

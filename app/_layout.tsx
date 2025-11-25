@@ -1,56 +1,26 @@
-import { usePathname } from "expo-router";
-import { TabList, Tabs, TabSlot, TabTrigger } from "expo-router/ui";
+import { Stack } from "expo-router";
+import { StatusBar } from "expo-status-bar";
 
 import "../global.css";
 
-// Components
-import { TabButton } from "@/components/tab-button";
-import { AppTabList } from "@/components/tab-list";
-
-// Icons
-import AccountIconFilled from "@/assets/icons/filled/account.svg";
-import CommunityIconFilled from "@/assets/icons/filled/community.svg";
-import HomeIconFilled from "@/assets/icons/filled/home.svg";
-import ReportsIconFilled from "@/assets/icons/filled/reports.svg";
-
-export default function Layout() {
-	const pathname = usePathname();
-
+export default function RootLayout() {
 	return (
-		<Tabs>
-			<TabSlot />
-			<TabList asChild>
-				<AppTabList>
-					<TabTrigger name="community" href="/community" asChild>
-						<TabButton
-							title="Comunidade"
-							isSelected={pathname === "/community"}
-							icon={CommunityIconFilled}
-						/>
-					</TabTrigger>
-					<TabTrigger name="reports" href="/reports" asChild>
-						<TabButton
-							title="Relatórios"
-							isSelected={pathname === "/reports"}
-							icon={ReportsIconFilled}
-						/>
-					</TabTrigger>
-					<TabTrigger name="home" href="/" asChild>
-						<TabButton
-							title="Início"
-							isSelected={pathname === "/"}
-							icon={HomeIconFilled}
-						/>
-					</TabTrigger>
-					<TabTrigger name="account" href="/account" asChild>
-						<TabButton
-							title="Conta"
-							isSelected={pathname === "/account"}
-							icon={AccountIconFilled}
-						/>
-					</TabTrigger>
-				</AppTabList>
-			</TabList>
-		</Tabs>
+		<>
+			<Stack
+				screenOptions={{
+					headerShown: false,
+				}}
+			>
+				<Stack.Screen name="(onboarding)/index" />
+				<Stack.Screen name="(tabs)" />
+				<Stack.Screen
+					name="submit"
+					options={{
+						presentation: "modal",
+					}}
+				/>
+			</Stack>
+			<StatusBar style="dark" />
+		</>
 	);
 }

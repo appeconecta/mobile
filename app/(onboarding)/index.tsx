@@ -1,6 +1,4 @@
-import GoogleIcon from '@/assets/icons/google.svg';
-import LogoFull from '@/assets/logo/logo-full.svg';
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState } from "react";
 import {
 	Image,
 	NativeScrollEvent,
@@ -10,8 +8,16 @@ import {
 	TouchableOpacity,
 	useWindowDimensions,
 	View,
-} from 'react-native';
-import steps from './steps';
+} from "react-native";
+
+// Icons
+import GoogleIcon from "@/assets/icons/google.svg";
+import LogoFull from "@/assets/logo/logo-full.svg";
+
+// Data
+import { RippleButton } from "@/components/ui/ripple-button";
+import { Link } from "expo-router";
+import steps from "./steps";
 
 const OnBoarding: React.FC = () => {
 	const { width } = useWindowDimensions();
@@ -30,12 +36,12 @@ const OnBoarding: React.FC = () => {
 	};
 
 	return (
-		<View className="flex flex-1 items-stretch gap-12 bg-[#F6FBF6]">
-			<View className="items-center px-3 py-[38px]">
-				<LogoFull className="max-h-[49px] max-w-[291px]" />
+		<View className="flex flex-1 items-stretch gap-8 bg-[#F6FBF6] py-16">
+			<View className="items-center px-3 pt-9">
+				<LogoFull />
 			</View>
 
-			<View className="flex-1 flex items-stretch justify-center gap-6">
+			<View className="flex flex-1 items-stretch justify-center gap-6">
 				<ScrollView
 					ref={scrollRef}
 					horizontal
@@ -43,9 +49,14 @@ const OnBoarding: React.FC = () => {
 					showsHorizontalScrollIndicator={false}
 					onScroll={onScroll}
 					scrollEventThrottle={16}
-					className="flex-1 max-h-[540px]">
+					className="flex-1"
+				>
 					{steps.map((s, i) => (
-						<View key={i} style={{ width }} className="flex-1 flex items-center gap-2 px-6 pt-2">
+						<View
+							key={i}
+							style={{ width }}
+							className="flex flex-1 items-center gap-2 px-6 pt-2"
+						>
 							<Text className="text-center text-[36px] font-bold text-[#103218]">
 								{s.title}
 							</Text>
@@ -65,7 +76,7 @@ const OnBoarding: React.FC = () => {
 					))}
 				</ScrollView>
 
-				<View className="mb-9 flex-row justify-center">
+				<View className="mt-6 flex-row justify-center">
 					{steps.map((_, i) => (
 						<TouchableOpacity
 							key={i}
@@ -74,23 +85,27 @@ const OnBoarding: React.FC = () => {
 							accessibilityLabel={`Ir para slide ${i + 1}`}
 							className={`mx-1.5 h-2 w-2 transition-all ${
 								activeIndex === i
-									? 'w-5 rounded-lg bg-[#7FB883]'
-									: 'rounded-full bg-[#DADADA]'
+									? "bg-primary-300 w-5 rounded-lg"
+									: "rounded-full bg-[#DADADA]"
 							}`}
 						/>
 					))}
 				</View>
 			</View>
 
-			<View className="p-5">
-				<TouchableOpacity
-					activeOpacity={0.8}
-					className="flex flex-row items-center justify-center gap-3 rounded-full border border-[#E6E6E6] bg-white py-3">
-					<GoogleIcon width={16} height={16} />
-					<Text className="text-[16px] font-semibold text-[#222]">
-						Continuar com Google
-					</Text>
-				</TouchableOpacity>
+			<View className="mx-12 overflow-hidden rounded-3xl">
+				<Link href={"/(tabs)"} asChild>
+					<RippleButton
+						className="flex flex-row items-center justify-center gap-3 rounded-3xl border border-[#E6E6E6] bg-white py-3"
+						activeOpacity={0.6}
+						onPress={() => console.log("Google Sign-In")}
+					>
+						<GoogleIcon width={16} height={16} />
+						<Text className="text-[16px] font-semibold text-[#222]">
+							Continuar com Google
+						</Text>
+					</RippleButton>
+				</Link>
 			</View>
 		</View>
 	);
