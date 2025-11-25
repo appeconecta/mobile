@@ -63,10 +63,8 @@
       ],
       "expo-web-browser"
     ],
-    "config": {
-      "googleMaps": {
-        "apiKey": "AIzaSyAaAhkzVZQ80esghvZlrw8hF6-rtwIo5rI"
-      }
+    "googleMaps": {
+      "apiKey": "AIzaSyAaAhkzVZQ80esghvZlrw8hF6-rtwIo5rI"
     },
     "experiments": {
       "tsconfigPaths": true,
