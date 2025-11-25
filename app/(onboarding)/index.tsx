@@ -1,3 +1,4 @@
+import { Link } from "expo-router";
 import React, { useRef, useState } from "react";
 import {
 	Image,
@@ -14,9 +15,11 @@ import {
 import GoogleIcon from "@/assets/icons/google.svg";
 import LogoFull from "@/assets/logo/logo-full.svg";
 
-// Data
+// Components
+import { Background } from "@/components/ui/background";
 import { RippleButton } from "@/components/ui/ripple-button";
-import { Link } from "expo-router";
+
+// Data
 import steps from "./steps";
 
 const OnBoarding: React.FC = () => {
@@ -36,7 +39,9 @@ const OnBoarding: React.FC = () => {
 	};
 
 	return (
-		<View className="flex flex-1 items-stretch gap-8 bg-[#F6FBF6] py-16">
+		<View className="flex flex-1 items-stretch gap-8 py-16">
+			<Background />
+
 			<View className="items-center px-3 pt-9">
 				<LogoFull />
 			</View>
