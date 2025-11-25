@@ -18,6 +18,11 @@
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyAaAhkzVZQ80esghvZlrw8hF6-rtwIo5rI"
+        }
+      },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": true,
       "package": "com.econecta.android"
@@ -63,9 +68,6 @@
       ],
       "expo-web-browser"
     ],
-    "googleMaps": {
-      "apiKey": "AIzaSyAaAhkzVZQ80esghvZlrw8hF6-rtwIo5rI"
-    },
     "experiments": {
       "tsconfigPaths": true,
       "typedRoutes": true,
