@@ -1,8 +1,13 @@
 import { FlashList } from "@shopify/flash-list";
 import { usePathname } from "expo-router";
 import { useEffect } from "react";
-import { Dimensions, Text, View } from "react-native";
-import { useAnimatedStyle, useSharedValue, withSpring, withTiming } from "react-native-reanimated";
+import { Dimensions, StyleProp, Text, View } from "react-native";
+import Animated, {
+	useAnimatedStyle,
+	useSharedValue,
+	withSpring,
+	withTiming,
+} from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 // Icons
@@ -101,7 +106,13 @@ export default function Reports() {
 
 			<FlashList
 				data={REPORTS_DATA}
-				renderItem={({ item }) => <FeedItem {...item} height={pageHeight} />}
+				renderItem={({ item, index }) => (
+					<FeedItem
+						{...item}
+						height={pageHeight}
+						style={index === 0 ? animatedStyle : undefined}
+					/>
+				)}
 				keyExtractor={(item) => item.id}
 				pagingEnabled
 				snapToInterval={pageHeight}
@@ -120,9 +131,10 @@ export default function Reports() {
 
 interface FeedItemProps extends FeedItemData {
 	height: number;
+	style?: StyleProp<any>;
 }
 
-function FeedItem({ author, address, imageUrl, height }: FeedItemProps) {
+function FeedItem({ author, address, imageUrl, height, style }: FeedItemProps) {
 	return (
 		<View className="relative w-full overflow-hidden" style={{ height }}>
 			<Image
@@ -141,7 +153,10 @@ function FeedItem({ author, address, imageUrl, height }: FeedItemProps) {
 				
 			</View> */}
 
-			<View className="bg-primary-400 absolute bottom-0 left-0 z-60 flex h-48 w-full flex-row items-start rounded-tl-2xl rounded-tr-2xl px-5">
+			<Animated.View
+				className="bg-primary-400 absolute bottom-0 left-0 z-60 flex h-48 w-full flex-row items-start rounded-tl-2xl rounded-tr-2xl px-5"
+				style={style}
+			>
 				<View className="mt-4 flex flex-col items-start justify-start gap-1">
 					<Text className="text-lg font-bold text-white">{author}</Text>
 					<View className="flex flex-row items-center justify-center gap-2">
@@ -149,7 +164,7 @@ function FeedItem({ author, address, imageUrl, height }: FeedItemProps) {
 						<Text className="text-base font-medium text-white">{address}</Text>
 					</View>
 				</View>
-			</View>
+			</Animated.View>
 		</View>
 	);
 }
