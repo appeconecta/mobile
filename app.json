@@ -27,6 +27,9 @@
 			"predictiveBackGestureEnabled": false,
 			"package": "com.econecta.android"
 		},
+		"androidStatusBar": {
+			"barStyle": "dark-content"
+		},
 		"androidNavigationBar": {
 			"enforceContrast": false
 		},

@@ -67,6 +67,7 @@ export default function RootLayout() {
 					}}
 				/>
 			</Stack>
+			{/* <Background /> */}
 			<StatusBar style="dark" />
 		</>
 	);

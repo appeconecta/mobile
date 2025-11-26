@@ -1,11 +1,13 @@
-import { LinearGradient } from "expo-linear-gradient";
+import { LinearGradient } from "@/components/ui/linear-gradient";
 
-export function Background() {
+export function Background({ children }: { children?: React.ReactNode }) {
 	return (
 		<LinearGradient
 			// Background Linear Gradient
-			colors={["#F6F7EB", "#F3F7F4"]}
-			className="absolute top-0 right-0 left-0 flex-1"
-		/>
+			colors={["#F6F7EB", "#F3F7F4", "red"]}
+			className="absolute top-0 right-0 left-0 h-full w-full"
+		>
+			{children}
+		</LinearGradient>
 	);
 }

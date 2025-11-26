@@ -4,7 +4,7 @@ import { Text, View } from "react-native";
 export default function SubmitReport() {
 	return (
 		<>
-			<View className="flex flex-1 items-center justify-center bg-gray-600">
+			<View className="bg-bg-200 flex flex-1 items-center justify-center">
 				<Text className="text-white">Submit</Text>
 			</View>
 			<StatusBar style="light" />
