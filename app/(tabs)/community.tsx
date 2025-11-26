@@ -7,6 +7,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 // Components
 import { Tag } from "@/components/tag";
+import { useStatusBarStyle } from "@/hooks/use-status-bar-style";
 
 // Types
 import { GoogleMapsColorScheme } from "expo-maps/build/google/GoogleMaps.types";
@@ -30,6 +31,7 @@ const StyledFilterIcon = styled(FilterIcon);
 
 export default function Community() {
 	const insets = useSafeAreaInsets();
+	useStatusBarStyle("dark");
 
 	const markerIconRefs = {
 		marker1: useImage(markerIcons.marker1),

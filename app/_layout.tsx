@@ -1,6 +1,5 @@
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { StatusBar } from "expo-status-bar";
 
 import "../global.css";
 
@@ -12,33 +11,29 @@ SplashScreen.setOptions({
 
 export default function RootLayout() {
 	return (
-		<>
-			<Stack
-				screenOptions={{
-					headerShown: false,
+		<Stack
+			screenOptions={{
+				headerShown: false,
+			}}
+		>
+			<Stack.Screen name="(onboarding)/index" />
+			<Stack.Screen name="(tabs)" />
+			<Stack.Screen
+				name="submit"
+				options={{
+					headerShown: true,
+					headerTitle: "Adicionar Relatório",
+					headerStyle: {
+						backgroundColor: "#346259",
+					},
+					headerTitleAlign: "center",
+					headerTitleStyle: {
+						color: "#FFFFFF",
+					},
+					headerTintColor: "#FFFFFF",
+					presentation: "modal",
 				}}
-			>
-				<Stack.Screen name="(onboarding)/index" />
-				<Stack.Screen name="(tabs)" />
-				<Stack.Screen
-					name="submit"
-					options={{
-						headerShown: true,
-						headerTitle: "Adicionar Relatório",
-						headerStyle: {
-							backgroundColor: "#346259",
-						},
-						headerTitleAlign: "center",
-						headerTitleStyle: {
-							color: "#FFFFFF",
-						},
-						headerTintColor: "#FFFFFF",
-						presentation: "modal",
-					}}
-				/>
-			</Stack>
-			{/* <Background /> */}
-			<StatusBar style="dark" />
-		</>
+			/>
+		</Stack>
 	);
 }

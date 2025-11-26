@@ -8,6 +8,7 @@ import { Link } from "expo-router";
 // Components
 import { Card } from "@/components/card";
 import { Image } from "@/components/ui/image";
+import { useStatusBarStyle } from "@/hooks/use-status-bar-style";
 
 // Icons
 import AddIcon from "@/assets/icons/add.svg";
@@ -23,12 +24,13 @@ const blurhash =
 
 export default function Index() {
 	const insets = useSafeAreaInsets();
+	useStatusBarStyle("dark");
 
 	return (
 		<ScrollView
 			nestedScrollEnabled
 			showsVerticalScrollIndicator={false}
-			contentContainerClassName="flex items-start justify-start gap-4 pt-5"
+			contentContainerClassName="flex items-start justify-start gap-4 pt-2"
 		>
 			{/* Header */}
 			<View

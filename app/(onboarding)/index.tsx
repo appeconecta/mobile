@@ -1,4 +1,5 @@
 import { Link } from "expo-router";
+import { StatusBar } from "expo-status-bar";
 import React, { useRef, useState } from "react";
 import {
 	Image,
@@ -111,6 +112,8 @@ const OnBoarding: React.FC = () => {
 					</RippleButton>
 				</Link>
 			</View>
+
+			<StatusBar style="dark" />
 		</View>
 	);
 };
