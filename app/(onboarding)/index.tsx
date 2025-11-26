@@ -97,7 +97,7 @@ const OnBoarding: React.FC = () => {
 				</View>
 			</View>
 
-			<View className="mx-12 overflow-hidden rounded-3xl">
+			<View className="mx-12 mb-6 overflow-hidden rounded-3xl">
 				<Link href={"/(tabs)"} asChild>
 					<RippleButton
 						className="flex flex-row items-center justify-center gap-3 rounded-3xl border border-[#E6E6E6] bg-white py-3"

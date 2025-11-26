@@ -2,8 +2,8 @@ import { usePathname } from "expo-router";
 import { TabList, Tabs, TabSlot, TabTrigger } from "expo-router/ui";
 
 // Components
-import { TabButton } from "@/components/tab-button";
-import { AppTabList } from "@/components/tab-list";
+import { TabButton } from "@/components/tabs/tab-button";
+import { AppTabList } from "@/components/tabs/tab-list";
 
 // Icons
 import AccountIconFilled from "@/assets/icons/filled/account.svg";

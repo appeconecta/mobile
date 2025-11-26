@@ -6,12 +6,14 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Link } from "expo-router";
 
 // Components
-import { Card } from "@/components/screens/home/card";
+import { Card } from "@/components/card";
 import { Image } from "@/components/ui/image";
 
 // Icons
 import AddIcon from "@/assets/icons/add.svg";
 import RecycleIcon from "@/assets/icons/recycle.svg";
+
+// Types
 import { GoogleMapsColorScheme } from "expo-maps/build/google/GoogleMaps.types";
 
 const StyledRecycleIcon = styled(RecycleIcon);
