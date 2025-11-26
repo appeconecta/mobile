@@ -1,5 +1,7 @@
+import { useImage } from "expo-image";
 import { GoogleMaps } from "expo-maps";
 import { styled } from "nativewind";
+import { useMemo } from "react";
 import { ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -21,10 +23,27 @@ import SearchIcon from "@/assets/icons/search.svg";
 const StyledSearchIcon = styled(SearchIcon);
 
 import FilterIcon from "@/assets/icons/filter.svg";
+import { markerConfigs, markerIcons } from "@/constants/markers";
+
+// Data
 const StyledFilterIcon = styled(FilterIcon);
 
 export default function Community() {
 	const insets = useSafeAreaInsets();
+
+	const markerIconRefs = {
+		marker1: useImage(markerIcons.marker1),
+		marker2: useImage(markerIcons.marker2),
+	} as const;
+
+	const renderedMarkers = useMemo(
+		() =>
+			markerConfigs.map((marker) => {
+				const icon = markerIconRefs[marker.iconName];
+				return icon ? { ...marker, icon } : marker;
+			}),
+		[]
+	);
 
 	return (
 		<View
@@ -55,6 +74,7 @@ export default function Community() {
 					zoom: 14,
 				}}
 				colorScheme={GoogleMapsColorScheme.LIGHT}
+				markers={renderedMarkers}
 			/>
 			{/* Header */}
 			{/* Title */}
