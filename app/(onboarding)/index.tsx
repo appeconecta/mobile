@@ -16,7 +16,6 @@ import GoogleIcon from "@/assets/icons/google.svg";
 import LogoFull from "@/assets/logo/logo-full.svg";
 
 // Components
-import { Background } from "@/components/ui/background";
 import { RippleButton } from "@/components/ui/ripple-button";
 
 // Data
@@ -40,7 +39,7 @@ const OnBoarding: React.FC = () => {
 
 	return (
 		<View className="flex flex-1 items-stretch gap-8 py-16">
-			<Background />
+			{/* <Background /> */}
 
 			<View className="items-center px-3 pt-9">
 				<LogoFull />

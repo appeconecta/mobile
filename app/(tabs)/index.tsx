@@ -1,3 +1,4 @@
+import { GoogleMaps } from "expo-maps";
 import { styled } from "nativewind";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -11,6 +12,7 @@ import { Image } from "@/components/ui/image";
 // Icons
 import AddIcon from "@/assets/icons/add.svg";
 import RecycleIcon from "@/assets/icons/recycle.svg";
+import { GoogleMapsColorScheme } from "expo-maps/build/google/GoogleMaps.types";
 
 const StyledRecycleIcon = styled(RecycleIcon);
 
@@ -80,10 +82,24 @@ export default function Index() {
 				className=""
 				contentContainerClassName="flex flex-row items-center justify-start gap-4 px-5"
 			>
-				<View className="flex w-80 flex-col rounded-xl">
-					<View className="h-52 w-full items-center justify-center rounded-tl-xl rounded-tr-xl bg-red-400">
-						<Text className="font-medium text-white">Mapa</Text>
-					</View>
+				<View className="flex w-80 flex-col overflow-hidden rounded-xl">
+					<GoogleMaps.View
+						style={{ flex: 1 }}
+						uiSettings={{
+							zoomControlsEnabled: false,
+						}}
+						cameraPosition={{
+							coordinates: {
+								latitude: -9.669745,
+								longitude: -35.721262,
+							},
+							zoom: 14,
+						}}
+						/* properties={{
+							isMyLocationEnabled: true,
+						}} */
+						colorScheme={GoogleMapsColorScheme.LIGHT}
+					/>
 					<Card className="gap-1 rounded-tl-none rounded-tr-none">
 						<Text className="text-3xl font-bold text-white">28 focos de lixo</Text>
 						<Text className="font-regular text-white">
