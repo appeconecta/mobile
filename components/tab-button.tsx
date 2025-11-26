@@ -9,6 +9,7 @@ import { useEffect } from "react";
 import { SvgProps } from "react-native-svg";
 
 import TrashBinTop from "@/assets/illustrations/trashbin-top.svg";
+import { cn } from "@/lib/utils";
 
 interface TabButtonProps extends TabTriggerSlotProps {
 	title: string;
@@ -20,7 +21,14 @@ const StyledTrashBinTop = styled(TrashBinTop, {
 	className: { target: "style" },
 });
 
-export function TabButton({ title, icon: Icon, isSelected, style, ...rest }: TabButtonProps) {
+export function TabButton({
+	title,
+	icon: Icon,
+	className,
+	isSelected,
+	style,
+	...rest
+}: TabButtonProps) {
 	const insets = useSafeAreaInsets();
 	const position = useSharedValue(isSelected ? 0 : 20);
 
@@ -55,10 +63,19 @@ export function TabButton({ title, icon: Icon, isSelected, style, ...rest }: Tab
 	return (
 		<Pressable className="h-36 flex-1" {...rest}>
 			<Animated.View
-				className="bg-primary-600 flex-1 items-center justify-center rounded-tl-lg rounded-tr-lg"
-				style={[{ paddingBottom: insets.bottom }, animatedStyle]}>
+				className={cn(
+					"bg-primary-600 flex-1 items-center justify-center rounded-tl-lg rounded-tr-lg",
+					className
+				)}
+				style={[{ paddingBottom: insets.bottom }, animatedStyle]}
+			>
 				<Text className="text-sm font-medium text-white">{title}</Text>
-				<Icon width={36} height={36} fill="white" style={{ marginTop: 4 }} />
+				<Icon
+					width={36}
+					height={36}
+					fill="white"
+					style={{ marginTop: 4, marginBlock: 16 }}
+				/>
 				<StyledTrashBinTop className="fill-primary-600 absolute -top-6.5 left-1/2 h-6 w-full -translate-x-1/2" />
 			</Animated.View>
 		</Pressable>

@@ -1,84 +1,83 @@
 {
-  "expo": {
-    "name": "econecta",
-    "slug": "econecta",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
-    "scheme": "econecta",
-    "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
-    "ios": {
-      "supportsTablet": true
-    },
-    "android": {
-      "adaptiveIcon": {
-        "backgroundColor": "#F6F7EB",
-        "foregroundImage": "./assets/images/android-icon-foreground.png",
-        "backgroundImage": "./assets/images/android-icon-background.png",
-        "monochromeImage": "./assets/images/android-icon-monochrome.png"
-      },
-      "config": {
-        "googleMaps": {
-          "apiKey": "AIzaSyAaAhkzVZQ80esghvZlrw8hF6-rtwIo5rI"
-        }
-      },
-      "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": true,
-      "package": "com.econecta.android"
-    },
-    "androidStatusBar": {
-      "barStyle": "light-content",
-      "backgroundColor": "#F6F7EB"
-    },
-    "web": {
-      "name": "econecta",
-      "output": "static",
-      "favicon": "./assets/images/favicon.png",
-      "bundler": "metro"
-    },
-    "plugins": [
-      "expo-router",
-      [
-        "expo-splash-screen",
-        {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#F6F7EB",
-          "dark": {
-            "backgroundColor": "#F6F7EB"
-          }
-        }
-      ],
-      [
-        "expo-maps",
-        {
-          "requestLocationPermission": true,
-          "locationPermission": "Allow $(PRODUCT_NAME) to use your location"
-        }
-      ],
-      [
-        "expo-camera",
-        {
-          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",
-          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
-          "recordAudioAndroid": true
-        }
-      ],
-      "expo-web-browser"
-    ],
-    "experiments": {
-      "tsconfigPaths": true,
-      "typedRoutes": true,
-      "reactCompiler": true
-    },
-    "extra": {
-      "router": {},
-      "eas": {
-        "projectId": "3cadabf5-4838-4a04-996c-df4ed5c9c097"
-      }
-    },
-    "owner": "meninocoiso"
-  }
+	"expo": {
+		"name": "econecta",
+		"slug": "econecta",
+		"version": "1.0.0",
+		"orientation": "portrait",
+		"icon": "./assets/images/icon.png",
+		"scheme": "econecta",
+		"userInterfaceStyle": "light",
+		"newArchEnabled": true,
+		"ios": {
+			"supportsTablet": true
+		},
+		"android": {
+			"adaptiveIcon": {
+				"backgroundColor": "#F6F7EB",
+				"foregroundImage": "./assets/images/android-icon-foreground.png",
+				"backgroundImage": "./assets/images/android-icon-background.png",
+				"monochromeImage": "./assets/images/android-icon-monochrome.png"
+			},
+			"config": {
+				"googleMaps": {
+					"apiKey": "AIzaSyAaAhkzVZQ80esghvZlrw8hF6-rtwIo5rI"
+				}
+			},
+			"edgeToEdgeEnabled": true,
+			"predictiveBackGestureEnabled": false,
+			"package": "com.econecta.android"
+		},
+		"androidNavigationBar": {
+			"enforceContrast": false
+		},
+		"web": {
+			"name": "econecta",
+			"output": "static",
+			"favicon": "./assets/images/favicon.png",
+			"bundler": "metro"
+		},
+		"plugins": [
+			"expo-router",
+			[
+				"expo-splash-screen",
+				{
+					"image": "./assets/images/splash-icon.png",
+					"imageWidth": 200,
+					"resizeMode": "contain",
+					"backgroundColor": "#F6F7EB",
+					"dark": {
+						"backgroundColor": "#F6F7EB"
+					}
+				}
+			],
+			[
+				"expo-maps",
+				{
+					"requestLocationPermission": true,
+					"locationPermission": "Allow $(PRODUCT_NAME) to use your location"
+				}
+			],
+			[
+				"expo-camera",
+				{
+					"cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",
+					"microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
+					"recordAudioAndroid": true
+				}
+			],
+			"expo-web-browser"
+		],
+		"experiments": {
+			"tsconfigPaths": true,
+			"typedRoutes": true,
+			"reactCompiler": true
+		},
+		"extra": {
+			"router": {},
+			"eas": {
+				"projectId": "3cadabf5-4838-4a04-996c-df4ed5c9c097"
+			}
+		},
+		"owner": "meninocoiso"
+	}
 }

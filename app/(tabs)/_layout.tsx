@@ -33,6 +33,14 @@ export default function Layout() {
 							icon={ReportsIconFilled}
 						/>
 					</TabTrigger>
+					{/* <Link href="/submit" asChild>
+						<TabButton
+							className="w-20"
+							title="Adicionar"
+							isSelected={false}
+							icon={ReportsIconFilled}
+						/>
+					</Link> */}
 					<TabTrigger name="home" href="/(tabs)" asChild>
 						<TabButton
 							title="Início"
