@@ -1,13 +1,8 @@
-import { Image } from "@/components/ui/image";
+import { FlashList } from "@shopify/flash-list";
 import { usePathname } from "expo-router";
 import { useEffect } from "react";
-import { Text, View } from "react-native";
-import Animated, {
-	useAnimatedStyle,
-	useSharedValue,
-	withSpring,
-	withTiming,
-} from "react-native-reanimated";
+import { Dimensions, Text, View } from "react-native";
+import { useAnimatedStyle, useSharedValue, withSpring, withTiming } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 // Icons
@@ -17,10 +12,41 @@ import ShareIcon from "@/assets/icons/share.svg";
 
 // Components
 import { FeedButton } from "@/components/feed-button";
+import { Image } from "@/components/ui/image";
 import { useStatusBarStyle } from "@/hooks/use-status-bar-style";
 
 const INITIAL_POSITION = 165;
 const SELECTED_POSITION = 0;
+const MIN_FEED_ITEM_HEIGHT = 520;
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
+
+type FeedItemData = {
+	id: string;
+	author: string;
+	address: string;
+	imageUrl: string;
+};
+
+const REPORTS_DATA: FeedItemData[] = [
+	{
+		id: "1",
+		author: "@fulaninho",
+		address: "1672 R. Al. da Paz, Maceió, Alagoas",
+		imageUrl: "https://i.imgur.com/5Hsj4tJ.jpeg",
+	},
+	{
+		id: "2",
+		author: "@ciclana",
+		address: "Av. da Paz, Maceió, Alagoas",
+		imageUrl: "https://i.imgur.com/d8G9K7p.jpeg",
+	},
+	{
+		id: "3",
+		author: "@joaodasilva",
+		address: "Praia da Pajuçara, Maceió",
+		imageUrl: "https://i.imgur.com/oF6I8fT.jpeg",
+	},
+];
 
 const springConfig = {
 	damping: 12,
@@ -32,6 +58,8 @@ const springConfig = {
 export default function Reports() {
 	const insets = useSafeAreaInsets();
 	useStatusBarStyle("light");
+
+	const pageHeight = Math.max(MIN_FEED_ITEM_HEIGHT, SCREEN_HEIGHT - (insets.top + insets.bottom));
 
 	const isSelected = usePathname() === "/reports";
 	const position = useSharedValue(isSelected ? SELECTED_POSITION : INITIAL_POSITION);
@@ -57,12 +85,6 @@ export default function Reports() {
 		};
 	});
 
-	const animatedOpacityStyle = useAnimatedStyle(() => {
-		return {
-			opacity: opacity.value,
-		};
-	});
-
 	return (
 		<View
 			className="flex flex-1 items-start justify-start bg-black"
@@ -71,36 +93,63 @@ export default function Reports() {
 			}}
 		>
 			<View className="w-full bg-black" style={{ height: insets.top }} />
+
+			{/* <Animated.View
+				className="bg-primary-400 absolute bottom-0 left-0 z-60 h-68 w-full rounded-tl-2xl rounded-tr-2xl"
+				style={animatedStyle}
+			/> */}
+
+			<FlashList
+				data={REPORTS_DATA}
+				renderItem={({ item }) => <FeedItem {...item} height={pageHeight} />}
+				keyExtractor={(item) => item.id}
+				pagingEnabled
+				snapToInterval={pageHeight}
+				snapToAlignment="start"
+				disableIntervalMomentum
+				showsVerticalScrollIndicator={false}
+				className="relative w-full flex-1"
+				style={{ flex: 1, width: "100%" }}
+				contentContainerStyle={{
+					paddingBottom: insets.bottom + 32,
+				}}
+			/>
+		</View>
+	);
+}
+
+interface FeedItemProps extends FeedItemData {
+	height: number;
+}
+
+function FeedItem({ author, address, imageUrl, height }: FeedItemProps) {
+	return (
+		<View className="relative w-full overflow-hidden" style={{ height }}>
 			<Image
-				source={"https://i.imgur.com/5Hsj4tJ.jpeg"}
+				source={imageUrl}
 				contentFit="cover"
 				transition={250}
 				className="h-full w-full"
 			/>
 
-			<View className="absolute right-0 bottom-80 flex flex-col items-center justify-start gap-4 px-5">
+			<View className="absolute right-0 bottom-60 flex flex-col items-center justify-start gap-4 px-5">
 				<FeedButton icon={FlagCheckIcon} />
 				<FeedButton icon={ShareIcon} />
 			</View>
 
-			<Animated.View
-				className="absolute bottom-49 left-0 z-50 flex flex-row items-center px-5"
-				style={animatedOpacityStyle}
-			>
-				<View className="flex flex-col items-start justify-start gap-1">
-					<Text className="text-lg font-bold text-white">@fulaninho</Text>
+			{/* <View className="absolute bottom-0 left-0 z-50 ">
+				
+			</View> */}
+
+			<View className="bg-primary-400 absolute bottom-0 left-0 z-60 flex h-48 w-full flex-row items-start rounded-tl-2xl rounded-tr-2xl px-5">
+				<View className="mt-4 flex flex-col items-start justify-start gap-1">
+					<Text className="text-lg font-bold text-white">{author}</Text>
 					<View className="flex flex-row items-center justify-center gap-2">
 						<PinIcon width={16} height={16} fill="#FFFFFF" />
-						<Text className="text-base font-medium text-white">
-							1672 R. Al. da Paz, Maceió, Alagoas
-						</Text>
+						<Text className="text-base font-medium text-white">{address}</Text>
 					</View>
 				</View>
-			</Animated.View>
-			<Animated.View
-				className="bg-primary-400 absolute bottom-0 left-0 h-68 w-full rounded-tl-2xl rounded-tr-2xl"
-				style={animatedStyle}
-			/>
+			</View>
 		</View>
 	);
 }
