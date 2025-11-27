@@ -1,22 +1,38 @@
 import { useStatusBarStyle } from "@/hooks/use-status-bar-style";
-import { Dimensions, Pressable, Text, TouchableOpacity, View } from "react-native";
+import { FlashList } from "@shopify/flash-list";
+import { useEffect, useRef, useState } from "react";
+import {
+	Dimensions,
+	NativeScrollEvent,
+	NativeSyntheticEvent,
+	Pressable,
+	ScrollView,
+	StyleProp,
+	Text,
+	TouchableOpacity,
+	View,
+} from "react-native";
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+import { cn } from "@/lib/utils";
+import { styled } from "nativewind";
 
 // Components
 import { Image } from "@/components/ui/image";
 
 // Icons
 import AnalyticsIcon from "@/assets/icons/analytics.svg";
+import CheckCircleIcon from "@/assets/icons/check_circle.svg";
 import DehazeIcon from "@/assets/icons/dehaze.svg";
 import GridViewIcon from "@/assets/icons/grid_view.svg";
-import { cn } from "@/lib/utils";
-import { styled } from "nativewind";
-import { useEffect, useState } from "react";
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
+import PendingIcon from "@/assets/icons/pending.svg";
 
 const StyledDehazeIcon = styled(DehazeIcon);
 const StyledAnalyticsIcon = styled(AnalyticsIcon);
 const StyledGridViewIcon = styled(GridViewIcon);
+const StyledCheckCircleIcon = styled(CheckCircleIcon);
+const StyledPendingIcon = styled(PendingIcon);
 
 const springConfig = {
 	damping: 12,
@@ -28,14 +44,45 @@ const springConfig = {
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 const BAR_WIDTH = SCREEN_WIDTH / 5;
+const ITEM_HEIGHT = 128;
+
 const POSTS_POSITION = SCREEN_WIDTH / 4 - BAR_WIDTH / 2;
 const ANALYTICS_POSITION = (3 * SCREEN_WIDTH) / 4 - BAR_WIDTH / 2;
+
+const ITEMS: FeedItemData[] = [
+	{
+		id: "1",
+		imageUrl: "https://i.imgur.com/5Hsj4tJ.jpeg",
+		status: "PENDING",
+		date: "2024-06-01",
+		address: "1672 R. Al. da Paz, Maceió, Alagoas",
+		description: "Lorem ipsum dolor sit amet.",
+	},
+	{
+		id: "2",
+		imageUrl: "https://i.imgur.com/d8G9K7p.jpeg",
+		status: "SOLVED",
+		date: "2024-06-02",
+		address: "Av. da Paz, Maceió, Alagoas",
+		description: "Consectetur adipiscing elit.",
+	},
+	{
+		id: "3",
+		imageUrl: "https://i.imgur.com/oF6I8fT.jpeg",
+		status: "PENDING",
+		date: "2024-06-24",
+		address: "Praia da Pajuçara, Maceió",
+		description: "Sed do eiusmod tempor incididunt.",
+	},
+];
 
 export default function Account() {
 	const insets = useSafeAreaInsets();
 	useStatusBarStyle("dark");
 
 	const [currentSection, setCurrentSection] = useState<"posts" | "analytics">("analytics");
+	const scrollRef = useRef<ScrollView | null>(null);
+	const hasSyncedInitialSection = useRef(false);
 
 	const position = useSharedValue(POSTS_POSITION);
 
@@ -47,6 +94,15 @@ export default function Account() {
 		}
 	}, [currentSection, position]);
 
+	useEffect(() => {
+		const offset = currentSection === "posts" ? 0 : SCREEN_WIDTH;
+		scrollRef.current?.scrollTo({
+			x: offset,
+			animated: hasSyncedInitialSection.current,
+		});
+		hasSyncedInitialSection.current = true;
+	}, [currentSection]);
+
 	const animatedStyle = useAnimatedStyle(() => {
 		return {
 			transform: [
@@ -57,13 +113,27 @@ export default function Account() {
 		};
 	});
 
+	const handleMomentumScrollEnd = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+		const offsetX = event.nativeEvent.contentOffset.x;
+		const nextSection = offsetX >= SCREEN_WIDTH / 2 ? "analytics" : "posts";
+		if (nextSection !== currentSection) {
+			setCurrentSection(nextSection);
+		}
+	};
+
+	const handleSectionChange = (section: "posts" | "analytics") => {
+		if (section !== currentSection) {
+			setCurrentSection(section);
+		}
+	};
+
 	return (
 		<View className="bg-bg-300 flex flex-1 items-center justify-start">
 			{/* Header */}
 			<View
-				className="bg-bg-200 flex w-full gap-7 shadow-2xl"
+				className="flex w-full gap-7 bg-[#f2f7f1] shadow-2xl"
 				style={{
-					paddingTop: insets.top + 24,
+					paddingTop: insets.top + 16,
 				}}
 			>
 				<View className="flex w-full flex-row items-center justify-between px-5">
@@ -73,8 +143,9 @@ export default function Account() {
 						android_ripple={{
 							radius: 24,
 							foreground: true,
-							color: "rgba(0, 0, 0, 0.5)",
+							color: "rgba(0, 0, 0, 0.05)",
 						}}
+						className="overflow-hidden rounded-full p-2"
 					>
 						<StyledDehazeIcon className="fill-primary-600" width={20} height={20} />
 					</Pressable>
@@ -115,7 +186,7 @@ export default function Account() {
 							}
 						)}
 						onPress={() => {
-							setCurrentSection("posts");
+							handleSectionChange("posts");
 						}}
 					>
 						<StyledGridViewIcon className="fill-primary-300" width={24} height={24} />
@@ -129,7 +200,7 @@ export default function Account() {
 							}
 						)}
 						onPress={() => {
-							setCurrentSection("analytics");
+							handleSectionChange("analytics");
 						}}
 					>
 						<StyledAnalyticsIcon className="fill-primary-300" width={24} height={24} />
@@ -141,6 +212,98 @@ export default function Account() {
 					></Animated.View>
 				</View>
 			</View>
+
+			<ScrollView
+				ref={scrollRef}
+				horizontal
+				pagingEnabled
+				showsHorizontalScrollIndicator={false}
+				onMomentumScrollEnd={handleMomentumScrollEnd}
+				scrollEventThrottle={16}
+				className="w-full"
+			>
+				<View style={{ width: SCREEN_WIDTH }}>
+					<FlashList
+						data={ITEMS}
+						renderItem={({ item, index }) => (
+							<FeedItem {...item} style={index === 0 ? animatedStyle : undefined} />
+						)}
+						keyExtractor={(item) => item.id}
+						showsVerticalScrollIndicator={false}
+						className="relative w-full flex-1"
+						style={{ flex: 1, width: "100%" }}
+						contentContainerStyle={{
+							paddingTop: 20,
+							paddingInline: 20,
+							paddingBottom: insets.bottom + 128,
+						}}
+					/>
+				</View>
+				<View
+					className="flex flex-1 items-center justify-start"
+					style={{ width: SCREEN_WIDTH }}
+				>
+					<Text className="text-primary-600 mt-16 text-center">Em breve!</Text>
+				</View>
+			</ScrollView>
+		</View>
+	);
+}
+
+interface FeedItemData {
+	id: string;
+	imageUrl: string;
+	status: "PENDING" | "SOLVED";
+	date: string;
+	address: string;
+	description: string;
+}
+
+interface FeedItemProps extends FeedItemData {
+	style?: StyleProp<any>;
+}
+
+const ICONS = {
+	PENDING: <StyledPendingIcon className="fill-red-300" width={16} height={16} />,
+	SOLVED: <StyledCheckCircleIcon className="fill-primary-200" width={16} height={16} />,
+};
+
+const STATUS_TEXT = {
+	PENDING: "Pendente",
+	SOLVED: "Resolvido",
+};
+
+function FeedItem({ status, date, address, description, imageUrl, style }: FeedItemProps) {
+	return (
+		<View
+			className="bg-bg-100 mb-4 w-full flex-row overflow-hidden rounded-lg"
+			style={[{ height: ITEM_HEIGHT }, style]}
+		>
+			<View className="flex flex-1 flex-col items-start justify-start gap-2 p-3">
+				<Text className="text-primary-600 mb-2 font-medium">{address}</Text>
+				<Text className="text-primary-400 font-normal">{description}</Text>
+
+				<View className="mt-auto flex w-full flex-row items-center justify-between">
+					<View className="flex flex-row items-center justify-start gap-1">
+						{ICONS[status]}
+						<Text
+							className={cn("text-sm font-medium", {
+								"text-red-300": status === "PENDING",
+								"text-primary-200": status === "SOLVED",
+							})}
+						>
+							{STATUS_TEXT[status]}
+						</Text>
+					</View>
+					<Text className="text-primary-300 font-light">
+						{new Date(date).toLocaleDateString("pt-BR", {
+							day: "2-digit",
+							month: "2-digit",
+						})}
+					</Text>
+				</View>
+			</View>
+			<Image source={imageUrl} contentFit="cover" transition={250} className="h-full w-2/5" />
 		</View>
 	);
 }
