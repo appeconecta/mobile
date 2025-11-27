@@ -1,30 +1,32 @@
-import { CameraType, CameraView, useCameraPermissions } from "expo-camera";
+import { CameraType, CameraView } from "expo-camera";
+import { Link, useRouter } from "expo-router";
 import { styled } from "nativewind";
 import { useState } from "react";
 import { Linking, Text, TouchableOpacity, View } from "react-native";
 
-// Icons
-import FlipCameraIcon from "@/assets/icons/flip_camera.svg";
 import { cn } from "@/lib/utils";
-import { useRouter } from "expo-router";
 
+// Icons
+import CameraIcon from "@/assets/icons/camera.svg";
+import FlipCameraIcon from "@/assets/icons/flip_camera.svg";
+
+const StyledCameraIcon = styled(CameraIcon);
 const StyledFlipCameraIcon = styled(FlipCameraIcon);
 
 interface CameraProps {
 	className?: string;
+	permission: {
+		granted: boolean;
+		canAskAgain: boolean;
+	} | null;
 }
 
-export function Camera({ className }: CameraProps) {
+export function Camera({ permission, className }: CameraProps) {
 	const [facing, setFacing] = useState<CameraType>("back");
-	const [permission] = useCameraPermissions();
 	const router = useRouter();
 
 	if (permission === null) {
-		return (
-			<View
-				className={cn("bg-primary-100 flex-1 rounded-tl-2xl rounded-tr-2xl", className)}
-			/>
-		);
+		return <View className={cn("bg-primary-100 w-full flex-1 rounded-2xl", className)} />;
 	}
 
 	if (!permission.granted) {
@@ -32,30 +34,37 @@ export function Camera({ className }: CameraProps) {
 			return (
 				<View
 					className={cn(
-						"bg-primary-100 flex-1 items-center justify-center rounded-tl-2xl rounded-tr-2xl",
+						"bg-primary-100 w-full flex-1 items-center justify-center rounded-2xl px-12",
 						className
 					)}
 				>
-					<Text>
-						Permissão de câmera negada. Por favor, habilite nas configurações do
-						dispositivo.
+					<Text className="text-primary-500 mb-4 text-center text-2xl">
+						A permissão para acessar a câmera foi negada.
 					</Text>
-					<TouchableOpacity onPress={goToSettings}>
-						<Text className="text-primary-400">Requerer permissão</Text>
+					<TouchableOpacity
+						className="bg-primary-400 rounded-lg px-6 py-3"
+						onPress={goToSettings}
+					>
+						<Text className="text-lg text-white">Ir para configurações</Text>
 					</TouchableOpacity>
 				</View>
 			);
 		} else {
 			return (
 				<View
-					className={cn("bg-primary-100 flex-1 rounded-tl-2xl rounded-tr-2xl", className)}
+					className={cn(
+						"bg-primary-100 w-full flex-1 items-center justify-center rounded-2xl px-12",
+						className
+					)}
 				>
-					<Text className="mb-4">Precisamos de sua permissão para acessar a câmera.</Text>
+					<Text className="text-primary-500 mb-4 text-center text-2xl">
+						Precisamos de sua permissão para acessar a câmera.
+					</Text>
 					<TouchableOpacity
-						className="bg-primary-400 rounded px-4 py-2"
-						onPress={() => router.replace("/(permissions)/camera")}
+						className="bg-primary-400 rounded-lg px-6 py-3"
+						onPress={goToPermissionsRequest}
 					>
-						<Text className="text-white">Requerer permissão</Text>
+						<Text className="text-lg text-white">Requerer permissão</Text>
 					</TouchableOpacity>
 				</View>
 			);
@@ -66,24 +75,35 @@ export function Camera({ className }: CameraProps) {
 		Linking.openSettings();
 	}
 
+	function goToPermissionsRequest() {
+		router.replace("/(permissions)/camera");
+	}
+
 	function toggleCameraFacing() {
 		setFacing((current) => (current === "back" ? "front" : "back"));
 	}
 
 	return (
-		<View
-			className={cn(
-				"relative flex w-full flex-1 flex-col items-center justify-center overflow-hidden rounded-tl-2xl rounded-tr-2xl",
-				className
-			)}
-		>
-			<CameraView style={{ flex: 1, width: "100%" }} facing={facing} />
-			<TouchableOpacity
-				className="bg-primary-400 absolute right-6 bottom-6 flex-row self-center rounded-full px-4 py-4"
-				onPress={toggleCameraFacing}
+		<>
+			<View
+				className={cn(
+					"relative flex w-full flex-1 flex-col items-center justify-center overflow-hidden rounded-tl-2xl rounded-tr-2xl",
+					className
+				)}
 			>
-				<StyledFlipCameraIcon width={24} height={24} className="fill-white" />
-			</TouchableOpacity>
-		</View>
+				<CameraView style={{ flex: 1, width: "100%" }} facing={facing} />
+				<TouchableOpacity
+					className="bg-primary-400 absolute right-6 bottom-6 flex-row self-center rounded-full px-4 py-4"
+					onPress={toggleCameraFacing}
+				>
+					<StyledFlipCameraIcon width={24} height={24} className="fill-white" />
+				</TouchableOpacity>
+			</View>
+			<Link href="/submit/step2" asChild>
+				<TouchableOpacity className="bg-primary-400 w-full items-center justify-center rounded-br-lg rounded-bl-lg px-9 py-4">
+					<StyledCameraIcon className="fill-white" width={28} height={28} />
+				</TouchableOpacity>
+			</Link>
+		</>
 	);
 }

@@ -1,18 +1,44 @@
-import { useIsFocused } from "@react-navigation/native";
-import { Link } from "expo-router";
-import { styled } from "nativewind";
-import { TouchableOpacity, View } from "react-native";
+import { useFocusEffect } from "expo-router";
+import { useCallback, useState } from "react";
+import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-// Icons
-import CameraIcon from "@/assets/icons/camera.svg";
-import { Camera } from "@/components/camera";
+import { Camera as ExpoCamera } from "expo-camera";
 
-const StyledCameraIcon = styled(CameraIcon);
+// Components
+import { Camera } from "@/components/camera";
 
 export default function SubmitFormStep1() {
 	const insets = useSafeAreaInsets();
-	const isFocused = useIsFocused();
+
+	const [isFocused, setIsFocused] = useState(false);
+	const [permission, setPermission] = useState<{
+		granted: boolean;
+		canAskAgain: boolean;
+	} | null>(null);
+
+	useFocusEffect(
+		// Callback should be wrapped in `React.useCallback` to avoid running the effect too often.
+		useCallback(() => {
+			// Invoked whenever the route is focused.
+
+			setIsFocused(true);
+			console.log("Checking camera permission...");
+			// Check camera permission
+			ExpoCamera.getCameraPermissionsAsync().then((perm) => {
+				console.log("Camera permission:", perm);
+				setPermission({
+					granted: perm.granted,
+					canAskAgain: perm.canAskAgain,
+				});
+			});
+
+			// Return function is invoked whenever the route gets out of focus.
+			return () => {
+				setIsFocused(false);
+			};
+		}, [])
+	);
 
 	return (
 		<View
@@ -22,12 +48,7 @@ export default function SubmitFormStep1() {
 				paddingBottom: insets.bottom + 10,
 			}}
 		>
-			{isFocused && <Camera />}
-			<Link href="/submit/step2" asChild>
-				<TouchableOpacity className="bg-primary-400 w-full items-center justify-center rounded-br-lg rounded-bl-lg px-9 py-4">
-					<StyledCameraIcon className="fill-white" width={28} height={28} />
-				</TouchableOpacity>
-			</Link>
+			{isFocused && <Camera permission={permission} />}
 		</View>
 	);
 }

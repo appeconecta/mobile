@@ -1,5 +1,7 @@
+import { Camera } from "expo-camera";
 import { GoogleMaps } from "expo-maps";
 import { styled } from "nativewind";
+import { useCallback } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -15,9 +17,7 @@ import AddIcon from "@/assets/icons/add.svg";
 import RecycleIcon from "@/assets/icons/recycle.svg";
 
 // Types
-import { useCameraPermissions } from "expo-camera";
 import { GoogleMapsColorScheme } from "expo-maps/build/google/GoogleMaps.types";
-import { useCallback } from "react";
 
 const StyledRecycleIcon = styled(RecycleIcon);
 
@@ -27,12 +27,13 @@ const blurhash =
 export default function Index() {
 	const insets = useSafeAreaInsets();
 	const router = useRouter();
-	const [permission] = useCameraPermissions();
 
 	useStatusBarStyle("dark");
 
-	const goToSubmit = useCallback(() => {
-		if (!permission?.granted) {
+	const goToSubmit = useCallback(async () => {
+		const permission = await Camera.getCameraPermissionsAsync();
+		console.log("Permission:", permission);
+		if (permission?.granted === false && permission?.canAskAgain === true) {
 			router.push("/(permissions)/camera");
 		} else {
 			router.push("/submit/step1");

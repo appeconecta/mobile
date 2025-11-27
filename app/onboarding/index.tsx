@@ -1,5 +1,4 @@
 import { Link } from "expo-router";
-import { StatusBar } from "expo-status-bar";
 import React, { useRef, useState } from "react";
 import {
 	Image,
@@ -22,7 +21,7 @@ import { RippleButton } from "@/components/ui/ripple-button";
 // Data
 import steps from "./steps";
 
-const OnBoarding: React.FC = () => {
+export default function OnBoarding() {
 	const { width } = useWindowDimensions();
 
 	const [activeIndex, setActiveIndex] = useState(0);
@@ -112,10 +111,6 @@ const OnBoarding: React.FC = () => {
 					</RippleButton>
 				</Link>
 			</View>
-
-			<StatusBar style="dark" />
 		</View>
 	);
-};
-
-export default OnBoarding;
+}
