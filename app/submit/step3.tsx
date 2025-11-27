@@ -79,12 +79,7 @@ export default function SubmitFormStep3() {
 	const keyExtractor = useCallback((item: Category) => item.id, []);
 
 	return (
-		<View
-			className="flex flex-1 items-start justify-start"
-			style={{
-				paddingBottom: insets.bottom + 10,
-			}}
-		>
+		<View className="flex flex-1 items-start justify-start">
 			<FlashList
 				data={CATEGORIES}
 				extraData={selectedTagsByCategory}
@@ -93,15 +88,15 @@ export default function SubmitFormStep3() {
 				ItemSeparatorComponent={CategorySeparator}
 				showsVerticalScrollIndicator={false}
 				className="relative w-full flex-1"
-				style={{ flex: 1, width: "100%" }}
+				style={{ width: "100%" }}
 				contentContainerStyle={{
 					paddingTop: 20,
-					paddingBottom: insets.bottom,
+					paddingBottom: insets.bottom + 80,
 				}}
 			/>
-			<View className="w-full px-5">
+			<View className="absolute bottom-0 w-full px-5" style={{ bottom: insets.bottom }}>
 				<Link href="/submit/step4" asChild>
-					<TouchableOpacity className="bg-primary-400 mt-auto w-full items-center justify-center rounded-lg px-9 py-3">
+					<TouchableOpacity className="bg-primary-400 w-full items-center justify-center rounded-lg px-9 py-3">
 						<Text className="text-center text-lg font-medium text-white">
 							Próximo passo
 						</Text>

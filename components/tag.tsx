@@ -1,13 +1,6 @@
-import { Text, TouchableOpacity } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 
 import CloseSmallIcon from "@/assets/icons/close_small.svg";
-import { useEffect } from "react";
-import Animated, {
-	interpolate,
-	useAnimatedStyle,
-	useSharedValue,
-	withSpring,
-} from "react-native-reanimated";
 
 interface TagProps {
 	name: string;
@@ -18,7 +11,7 @@ interface TagProps {
 export function Tag({ name, selected = false, onPress }: TagProps) {
 	const bgClass = selected ? "bg-primary-600" : "bg-primary-300";
 
-	const scale = useSharedValue(selected ? 1 : 0);
+	/* const scale = useSharedValue(selected ? 1 : 0);
 
 	useEffect(() => {
 		if (selected) {
@@ -38,7 +31,7 @@ export function Tag({ name, selected = false, onPress }: TagProps) {
 			opacity,
 			transform: [{ scale: scale.value }],
 		};
-	});
+	}); */
 
 	return (
 		<TouchableOpacity
@@ -47,9 +40,11 @@ export function Tag({ name, selected = false, onPress }: TagProps) {
 			onPress={onPress}
 		>
 			<Text className={`text-base font-bold text-white`}>{name}</Text>
-			<Animated.View style={animatedStyle}>
-				<CloseSmallIcon width={18} height={18} fill={"white"} />
-			</Animated.View>
+			{selected && (
+				<View /* style={animatedStyle} */>
+					<CloseSmallIcon width={18} height={18} fill={"white"} />
+				</View>
+			)}
 		</TouchableOpacity>
 	);
 }
