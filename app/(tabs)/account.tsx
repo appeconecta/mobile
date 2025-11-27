@@ -41,6 +41,7 @@ import ForYouIcon from "@/assets/icons/for_you.svg";
 import InfoIcon from "@/assets/icons/info.svg";
 import LogoutIcon from "@/assets/icons/logout.svg";
 import SettingsIcon from "@/assets/icons/settings.svg";
+import { Link } from "expo-router";
 
 const StyledDehazeIcon = styled(DehazeIcon);
 const StyledAnalyticsIcon = styled(AnalyticsIcon);
@@ -158,6 +159,12 @@ export default function Account() {
 		const sheet = bottomSheetRef.current;
 		if (!sheet) return;
 		sheet.present();
+	}, []);
+
+	const handleModalClose = useCallback(() => {
+		const sheet = bottomSheetRef.current;
+		if (!sheet) return;
+		sheet.dismiss();
 	}, []);
 
 	return (
@@ -335,21 +342,30 @@ export default function Account() {
 				</View>
 
 				<View className="flex w-full flex-col items-start justify-start gap-4 p-12">
-					<AccountModalButton
-						icon={StyledForYouIcon}
-						title="Perfil"
-						description="como a comunidade lhe vê"
-					/>
-					<AccountModalButton
-						icon={StyledSettingsIcon}
-						title="Conta"
-						description="configurações"
-					/>
-					<AccountModalButton
-						icon={StyledInfoIcon}
-						title="Info"
-						description="agradecimentos e detalhes técnicos"
-					/>
+					<Link href="/account/profile" asChild>
+						<AccountModalButton
+							icon={StyledForYouIcon}
+							title="Perfil"
+							description="como a comunidade lhe vê"
+							onPress={handleModalClose}
+						/>
+					</Link>
+					<Link href="/account/settings" asChild>
+						<AccountModalButton
+							icon={StyledSettingsIcon}
+							title="Conta"
+							description="configurações"
+							onPress={handleModalClose}
+						/>
+					</Link>
+					<Link href="/account/credits" asChild>
+						<AccountModalButton
+							icon={StyledInfoIcon}
+							title="Info"
+							description="agradecimentos e detalhes técnicos"
+							onPress={handleModalClose}
+						/>
+					</Link>
 					<AccountModalButton
 						icon={StyledLogoutIcon}
 						title="Log-out"
@@ -439,6 +455,7 @@ function AccountModalButton({
 		<>
 			<TouchableOpacity
 				activeOpacity={0.8}
+				onPress={onPress}
 				className="flex flex-row items-center justify-start gap-9"
 			>
 				<View className="h-12 w-12 items-center justify-center">
