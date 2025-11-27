@@ -43,18 +43,20 @@ export default function Index() {
 					</Text>
 					<Text className="text-primary-600 text-4xl font-bold">Seu engajamento</Text>
 				</View>
-				<TouchableOpacity activeOpacity={0.8}>
-					<Image
-						source={"https://i.imgur.com/5Hsj4tJ.jpeg"}
-						placeholder={{ blurhash }}
-						contentFit="cover"
-						transition={1000}
-						className="border-primary-500 h-16 w-16 rounded-full border-2"
-					/>
-				</TouchableOpacity>
+				<Link href="/(tabs)/account" asChild>
+					<TouchableOpacity activeOpacity={0.8}>
+						<Image
+							source={"https://i.imgur.com/5Hsj4tJ.jpeg"}
+							placeholder={{ blurhash }}
+							contentFit="cover"
+							transition={1000}
+							className="border-primary-500 h-16 w-16 rounded-full border-2"
+						/>
+					</TouchableOpacity>
+				</Link>
 			</View>
 
-			<Link href={"/submit"} asChild>
+			<Link href={"/submit/step1"} asChild>
 				<TouchableOpacity activeOpacity={0.8} className="w-full px-5">
 					<Card className="w-full flex-row gap-3 py-6">
 						<AddIcon />

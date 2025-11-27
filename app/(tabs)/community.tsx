@@ -24,7 +24,7 @@ import SearchIcon from "@/assets/icons/search.svg";
 const StyledSearchIcon = styled(SearchIcon);
 
 import FilterIcon from "@/assets/icons/filter.svg";
-import { markerConfigs, markerIcons } from "@/constants/markers";
+import { markerConfigs, markerIcons } from "@/constants/marker";
 
 // Data
 const StyledFilterIcon = styled(FilterIcon);
