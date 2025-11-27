@@ -1,5 +1,5 @@
 import { useStatusBarStyle } from "@/hooks/use-status-bar-style";
-import { Pressable, Text, TouchableOpacity, View } from "react-native";
+import { Dimensions, Pressable, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 // Components
@@ -11,11 +11,25 @@ import DehazeIcon from "@/assets/icons/dehaze.svg";
 import GridViewIcon from "@/assets/icons/grid_view.svg";
 import { cn } from "@/lib/utils";
 import { styled } from "nativewind";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 
 const StyledDehazeIcon = styled(DehazeIcon);
 const StyledAnalyticsIcon = styled(AnalyticsIcon);
 const StyledGridViewIcon = styled(GridViewIcon);
+
+const springConfig = {
+	damping: 12,
+	stiffness: 100,
+	mass: 0.6,
+	velocity: 20,
+};
+
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
+
+const BAR_WIDTH = SCREEN_WIDTH / 5;
+const POSTS_POSITION = SCREEN_WIDTH / 4 - BAR_WIDTH / 2;
+const ANALYTICS_POSITION = (3 * SCREEN_WIDTH) / 4 - BAR_WIDTH / 2;
 
 export default function Account() {
 	const insets = useSafeAreaInsets();
@@ -23,16 +37,35 @@ export default function Account() {
 
 	const [currentSection, setCurrentSection] = useState<"posts" | "analytics">("analytics");
 
+	const position = useSharedValue(POSTS_POSITION);
+
+	useEffect(() => {
+		if (currentSection === "posts") {
+			position.value = withSpring(POSTS_POSITION, springConfig);
+		} else {
+			position.value = withSpring(ANALYTICS_POSITION, springConfig);
+		}
+	}, [currentSection, position]);
+
+	const animatedStyle = useAnimatedStyle(() => {
+		return {
+			transform: [
+				{
+					translateX: position.value,
+				},
+			],
+		};
+	});
+
 	return (
-		<View
-			className="bg-bg-200 flex flex-1 items-center justify-start"
-			style={{
-				paddingTop: insets.top + 24,
-				paddingBottom: insets.bottom + 16,
-			}}
-		>
+		<View className="bg-bg-300 flex flex-1 items-center justify-start">
 			{/* Header */}
-			<View className="flex w-full gap-7 shadow-2xl">
+			<View
+				className="bg-bg-200 flex w-full gap-7 shadow-2xl"
+				style={{
+					paddingTop: insets.top + 24,
+				}}
+			>
 				<View className="flex w-full flex-row items-center justify-between px-5">
 					<View className="w-5" />
 					<Text className="text-primary-600 text-xl font-bold">Fulano da Silva</Text>
@@ -72,35 +105,40 @@ export default function Account() {
 					</View>
 				</View>
 
-				<View className="flex w-full flex-row items-center justify-evenly">
+				<View className="flex w-full flex-row items-center justify-center">
 					<TouchableOpacity
 						activeOpacity={0.8}
 						className={cn(
-							"border-primary-300 flex-1 flex-row items-center justify-center gap-2 border-b-0 px-4 py-4",
+							"border-primary-300 flex-1 flex-row items-center justify-center gap-2 border-b-0 py-4 opacity-40",
 							{
-								"border-b-2": currentSection === "posts",
+								"opacity-100": currentSection === "posts",
 							}
 						)}
 						onPress={() => {
 							setCurrentSection("posts");
 						}}
 					>
-						<StyledGridViewIcon className="fill-primary-300" width={20} height={20} />
+						<StyledGridViewIcon className="fill-primary-300" width={24} height={24} />
 					</TouchableOpacity>
 					<TouchableOpacity
 						activeOpacity={0.8}
 						className={cn(
-							"border-primary-300 flex-1 flex-row items-center justify-center gap-2 border-b-0 px-4 py-4",
+							"border-primary-300 flex-1 flex-row items-center justify-center gap-2 border-b-0 opacity-40",
 							{
-								"border-b-2": currentSection === "analytics",
+								"opacity-100": currentSection === "analytics",
 							}
 						)}
 						onPress={() => {
 							setCurrentSection("analytics");
 						}}
 					>
-						<StyledAnalyticsIcon className="fill-primary-300" width={20} height={20} />
+						<StyledAnalyticsIcon className="fill-primary-300" width={24} height={24} />
 					</TouchableOpacity>
+
+					<Animated.View
+						className="bg-primary-300 absolute bottom-0 left-0 h-0.5 -translate-x-1/2 rounded-full"
+						style={[animatedStyle, { width: BAR_WIDTH }]}
+					></Animated.View>
 				</View>
 			</View>
 		</View>
