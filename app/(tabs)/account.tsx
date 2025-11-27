@@ -1,6 +1,6 @@
 import { useStatusBarStyle } from "@/hooks/use-status-bar-style";
 import { FlashList } from "@shopify/flash-list";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
 	Dimensions,
 	NativeScrollEvent,
@@ -32,8 +32,10 @@ import CheckCircleIcon from "@/assets/icons/check_circle.svg";
 import DehazeIcon from "@/assets/icons/dehaze.svg";
 import GridViewIcon from "@/assets/icons/grid_view.svg";
 import PendingIcon from "@/assets/icons/pending.svg";
-import { AccountSheet } from "@/components/account-sheet";
-import BottomSheet from "@gorhom/bottom-sheet";
+import { BottomSheet } from "@/components/bottom-sheet";
+import { LinearGradient } from "@/components/ui/linear-gradient";
+import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
+import { SvgProps } from "react-native-svg";
 
 const StyledDehazeIcon = styled(DehazeIcon);
 const StyledAnalyticsIcon = styled(AnalyticsIcon);
@@ -82,6 +84,12 @@ const ITEMS: FeedItemData[] = [
 		description: "Sed do eiusmod tempor incididunt.",
 	},
 ];
+
+const user = {
+	first_name: "Eduardo",
+	last_name: "Maciel",
+	email: "teste@gmail.com",
+};
 
 export default function Account() {
 	const insets = useSafeAreaInsets();
@@ -134,7 +142,13 @@ export default function Account() {
 		}
 	};
 
-	const bottomSheetRef = useRef<BottomSheet>(null);
+	const bottomSheetRef = useRef<BottomSheetModal>(null);
+
+	const handleModalOpen = useCallback(() => {
+		const sheet = bottomSheetRef.current;
+		if (!sheet) return;
+		sheet.present();
+	}, []);
 
 	return (
 		<ScrollView
@@ -163,9 +177,7 @@ export default function Account() {
 								color: "rgba(0, 0, 0, 0.05)",
 							}}
 							className="overflow-hidden rounded-full p-2"
-							onPress={() => {
-								bottomSheetRef.current?.expand();
-							}}
+							onPress={handleModalOpen}
 						>
 							<StyledDehazeIcon className="fill-primary-600" width={20} height={20} />
 						</Pressable>
@@ -279,7 +291,39 @@ export default function Account() {
 				</ScrollView>
 			</View>
 
-			<AccountSheet ref={bottomSheetRef} className="flex-1 items-center p-9" />
+			<BottomSheet
+				ref={bottomSheetRef}
+				backgroundStyle={{ borderTopLeftRadius: 24, borderTopRightRadius: 24 }}
+				className="flex-1 items-center"
+				handleStyle={{ display: "none" }}
+				snapPoints={["85%"]}
+				index={1}
+				backdropComponent={BottomSheetBackdrop}
+				enableDismissOnClose
+				enablePanDownToClose
+			>
+				<LinearGradient
+					colors={["#AED296", "#7FB883"]}
+					className="h-40 w-full items-center justify-center gap-1 rounded-tl-2xl rounded-tr-2xl"
+					start={{ x: 0, y: 0.5 }}
+					end={{ x: 1, y: 0.5 }}
+				>
+					<Text className="text-3xl font-bold text-white">
+						{user ? user.first_name + " " + user.last_name : "nomedousuário"}
+					</Text>
+					<Text className="text-base font-medium text-white">
+						{user ? user.email : "email@email.com"}
+					</Text>
+				</LinearGradient>
+				<View className="w-[80%] flex-1 items-center">
+					<Pressable
+						className="absolute -top-6 h-12 w-12 items-center justify-center rounded-full bg-white shadow-lg"
+						onPress={() => bottomSheetRef.current?.dismiss()}
+					>
+						<Text className="text-primary-200 text-2xl font-bold">X</Text>
+					</Pressable>
+				</View>
+			</BottomSheet>
 		</ScrollView>
 	);
 }
@@ -339,5 +383,24 @@ function FeedItem({ status, date, address, description, imageUrl, style }: FeedI
 			</View>
 			<Image source={imageUrl} contentFit="cover" transition={250} className="h-full w-2/5" />
 		</Animated.View>
+	);
+}
+
+interface AccountModalButtonProps {
+	onPress?: () => void;
+	icon: React.ComponentType<SvgProps>;
+	title: string;
+	description: string;
+}
+
+function AccountModalButton({ onPress, title, description }: AccountModalButtonProps) {
+	return (
+		<TouchableOpacity activeOpacity={0.8} className="flex flex-row items-center justify-start">
+			<View></View>
+			<View>
+				<Text>Teste</Text>
+				<Text>Teste</Text>
+			</View>
+		</TouchableOpacity>
 	);
 }

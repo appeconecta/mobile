@@ -1,25 +1,24 @@
-import BottomSheet, { BottomSheetProps, BottomSheetView } from "@gorhom/bottom-sheet";
-import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
+import { BottomSheetModal, BottomSheetModalProps, BottomSheetView } from "@gorhom/bottom-sheet";
+import { BottomSheetModalMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
 import React, { forwardRef, useMemo } from "react";
-import { StyleProp, Text, ViewStyle } from "react-native";
+import { StyleProp, ViewStyle } from "react-native";
 
-interface AccountSheetProps extends Omit<BottomSheetProps, "children"> {
+interface BottomSheetProps extends Omit<BottomSheetModalProps, "children"> {
 	className?: string;
 	contentStyle?: StyleProp<ViewStyle>;
 	children?: React.ReactNode;
 }
 
-const AccountSheetComponent = (
+const BottomSheetComponent = (
 	{
 		className,
 		contentStyle,
 		children,
 		snapPoints,
-		index = -1,
 		// onChange,
 		...rest
-	}: AccountSheetProps,
-	ref: React.Ref<BottomSheetMethods>
+	}: BottomSheetProps,
+	ref: React.Ref<BottomSheetModalMethods>
 ) => {
 	/* const handleSheetChanges = useCallback(
 		(nextIndex: number) => {
@@ -33,22 +32,21 @@ const AccountSheetComponent = (
 	const sheetSnapPoints = useMemo(() => snapPoints ?? ["35%", "60%"], [snapPoints]);
 
 	return (
-		<BottomSheet
+		<BottomSheetModal
 			ref={ref}
-			index={index}
 			snapPoints={sheetSnapPoints}
 			// onChange={handleSheetChanges}
 			{...rest}
 		>
 			<BottomSheetView className={className} style={contentStyle}>
-				{children ?? <Text>Awesome 🎉</Text>}
+				{children}
 			</BottomSheetView>
-		</BottomSheet>
+		</BottomSheetModal>
 	);
 };
 
-export const AccountSheet = forwardRef<BottomSheetMethods, AccountSheetProps>(
-	AccountSheetComponent
+export const BottomSheet = forwardRef<BottomSheetModalMethods, BottomSheetProps>(
+	BottomSheetComponent
 );
 
-AccountSheet.displayName = "AccountSheet";
+BottomSheet.displayName = "AccountSheet";

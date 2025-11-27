@@ -1,3 +1,4 @@
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -13,30 +14,32 @@ SplashScreen.setOptions({
 export default function RootLayout() {
 	return (
 		<GestureHandlerRootView style={{ flex: 1 }}>
-			<Stack
-				screenOptions={{
-					headerShown: false,
-				}}
-			>
-				<Stack.Screen name="(onboarding)/index" />
-				<Stack.Screen name="(tabs)" />
-				<Stack.Screen
-					name="submit"
-					options={{
-						headerShown: true,
-						headerTitle: "Adicionar Relatório",
-						headerStyle: {
-							backgroundColor: "#346259",
-						},
-						headerTitleAlign: "center",
-						headerTitleStyle: {
-							color: "#FFFFFF",
-						},
-						headerTintColor: "#FFFFFF",
-						presentation: "modal",
+			<BottomSheetModalProvider>
+				<Stack
+					screenOptions={{
+						headerShown: false,
 					}}
-				/>
-			</Stack>
+				>
+					<Stack.Screen name="(onboarding)/index" />
+					<Stack.Screen name="(tabs)" />
+					<Stack.Screen
+						name="submit"
+						options={{
+							headerShown: true,
+							headerTitle: "Adicionar Relatório",
+							headerStyle: {
+								backgroundColor: "#346259",
+							},
+							headerTitleAlign: "center",
+							headerTitleStyle: {
+								color: "#FFFFFF",
+							},
+							headerTintColor: "#FFFFFF",
+							presentation: "modal",
+						}}
+					/>
+				</Stack>
+			</BottomSheetModalProvider>
 		</GestureHandlerRootView>
 	);
 }
