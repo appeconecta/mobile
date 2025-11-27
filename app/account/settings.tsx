@@ -1,5 +1,6 @@
 import { Card } from "@/components/card";
 import { useStatusBarStyle } from "@/hooks/use-status-bar-style";
+import { styled } from "nativewind";
 import { useState } from "react";
 import { Pressable, ScrollView, Switch, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -36,6 +37,10 @@ const dataControls = [
 	},
 ];
 
+const StyledScrollView = styled(ScrollView, {
+	contentContainerClassName: { target: "contentContainerStyle" },
+});
+
 export default function Settings() {
 	const insets = useSafeAreaInsets();
 	const [notifications, setNotifications] = useState(notificationDefaults);
@@ -46,10 +51,10 @@ export default function Settings() {
 	};
 
 	return (
-		<ScrollView
+		<StyledScrollView
 			className="flex-1 bg-[#030705]"
-			contentContainerClassName="gap-6 px-6 pb-20"
-			contentContainerStyle={{ paddingTop: insets.top + 32 }}
+			contentContainerClassName="gap-6 px-6 pb-8"
+			contentContainerStyle={{ paddingTop: insets.top }}
 			showsVerticalScrollIndicator={false}
 		>
 			<Card className="gap-2">
@@ -202,6 +207,6 @@ export default function Settings() {
 					</Text>
 				</Pressable>
 			</View>
-		</ScrollView>
+		</StyledScrollView>
 	);
 }

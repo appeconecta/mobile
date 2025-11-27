@@ -1,21 +1,22 @@
 import { Card } from "@/components/card";
 import { LinearGradient } from "@/components/ui/linear-gradient";
 import { useStatusBarStyle } from "@/hooks/use-status-bar-style";
+import { styled } from "nativewind";
 import { ScrollView, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const contributors = [
 	{
-		role: "Pesquisa e campo",
-		members: ["Eduardo Maciel", "Bárbara Costa"],
+		role: "UI/UX Design & Frontend",
+		members: ["Eduardo Maciel"],
 	},
 	{
-		role: "UX & Conteúdo",
-		members: ["Lívia Barros", "Marina Falcão"],
+		role: "Backend & Infraestrutura",
+		members: ["Lucas Cassiano"],
 	},
 	{
-		role: "Engenharia",
-		members: ["Appe Conecta", "Squad ACE 2"],
+		role: "Pesquisa & Conteúdo",
+		members: ["Maria Letícia Ventura"],
 	},
 ];
 
@@ -26,13 +27,8 @@ const acknowledgements = [
 			"Moradores que compartilharam relatos, rotas e imagens para mapear os focos prioritários",
 	},
 	{
-		title: "Agentes comunitários",
-		description:
-			"Profissionais de saúde e limpeza urbana que revisaram fluxos e métricas do painel",
-	},
-	{
 		title: "Parceiros acadêmicos",
-		description: "Laboratórios da UFAL que emprestaram infraestrutura e mentorias técnicas",
+		description: "Professores mentores da UFAL que orientaram o desenvolvimento do projeto",
 	},
 ];
 
@@ -44,16 +40,21 @@ const buildInfo = {
 	updatedAt: "Novembro/2025",
 	contact: "appeconecta@ufal.br",
 };
+styled;
+
+const StyledScrollView = styled(ScrollView, {
+	contentContainerClassName: { target: "contentContainerStyle" },
+});
 
 export default function Credits() {
 	const insets = useSafeAreaInsets();
 	useStatusBarStyle("light");
 
 	return (
-		<ScrollView
+		<StyledScrollView
 			className="flex-1 bg-[#050F0B]"
-			contentContainerClassName="gap-6 px-6 pb-16"
-			contentContainerStyle={{ paddingTop: insets.top + 32 }}
+			contentContainerClassName="flex flex-col gap-6 px-6 pb-16"
+			contentContainerStyle={{ paddingTop: insets.top, paddingBottom: insets.bottom + 20 }}
 			showsVerticalScrollIndicator={false}
 		>
 			<LinearGradient
@@ -67,9 +68,8 @@ export default function Credits() {
 				</Text>
 				<Text className="mt-2 text-3xl font-bold text-white">Créditos & bastidores</Text>
 				<Text className="text-primary-100 mt-3 text-base leading-6">
-					Metas climáticas, vigilância ativa e educação ambiental se encontram aqui. Esta
-					versão do app sintetiza meses de entrevistas, testes de campo e ciclos de
-					aprendizado com comunidades locais.
+					Metas ambientais, pesquisa ativa e tecnologia se encontram aqui. Esta versão do
+					app sintetiza meses de desenvolvimento, inúmeros testes e ciclos de aprendizado.
 				</Text>
 			</LinearGradient>
 
@@ -78,7 +78,7 @@ export default function Credits() {
 				<Text className="text-sm text-white/70">
 					Versão {buildInfo.version} · Codinome {buildInfo.codename}
 				</Text>
-				<View className="mt-3 w-full rounded-2xl bg-white/10 p-4">
+				<View className="mt-1 w-full rounded-2xl bg-white/10 p-4">
 					<Text className="text-sm font-semibold text-white">Atualizado</Text>
 					<Text className="text-lg font-bold text-white">{buildInfo.updatedAt}</Text>
 					<Text className="mt-2 text-sm text-white/70">Contato: {buildInfo.contact}</Text>
@@ -137,6 +137,6 @@ export default function Credits() {
 					))}
 				</View>
 			</View>
-		</ScrollView>
+		</StyledScrollView>
 	);
 }

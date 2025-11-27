@@ -2,7 +2,8 @@ import { Card } from "@/components/card";
 import { Image } from "@/components/ui/image";
 import { LinearGradient } from "@/components/ui/linear-gradient";
 import { useStatusBarStyle } from "@/hooks/use-status-bar-style";
-import { ScrollView, Text, View } from "react-native";
+import { styled } from "nativewind";
+import { Dimensions, ScrollView, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const profile = {
@@ -88,54 +89,64 @@ const roadmap = [
 const blurhash =
 	"|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
 
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
+const CARD_WIDTH = SCREEN_WIDTH - 40;
+
+const StyledScrollView = styled(ScrollView, {
+	contentContainerClassName: { target: "contentContainerStyle" },
+});
+
 export default function Profile() {
 	const insets = useSafeAreaInsets();
 	useStatusBarStyle("light");
 
 	return (
-		<ScrollView
+		<StyledScrollView
 			className="flex-1 bg-[#040A08]"
 			showsVerticalScrollIndicator={false}
-			contentContainerClassName="gap-6 px-6 pb-20"
-			contentContainerStyle={{ paddingTop: insets.top + 32 }}
+			contentContainerClassName="flex items-start justify-start flex-col gap-6"
+			contentContainerStyle={{ paddingTop: insets.top, paddingBottom: insets.bottom + 20 }}
 		>
-			<LinearGradient
-				colors={["#09150F", "#0F2418", "#0B1B14"]}
-				start={{ x: 0, y: 0 }}
-				end={{ x: 1, y: 1 }}
-				className="rounded-3xl p-6"
-			>
-				<View className="flex flex-row items-center gap-4">
-					<Image
-						source="https://i.imgur.com/5Hsj4tJ.jpeg"
-						placeholder={{ blurhash }}
-						contentFit="cover"
-						transition={500}
-						className="h-20 w-20 rounded-2xl"
-					/>
-					<View className="flex-1">
-						<Text className="text-2xl font-bold text-white">{profile.name}</Text>
-						<Text className="text-primary-100 text-base">{profile.handle}</Text>
-						<Text className="mt-1 text-sm text-white/70">{profile.base}</Text>
+			<View className="w-full px-5">
+				<LinearGradient
+					colors={["#09150F", "#0F2418", "#0B1B14"]}
+					start={{ x: 0, y: 0 }}
+					end={{ x: 1, y: 1 }}
+					className="w-full rounded-3xl p-6"
+				>
+					<View className="flex flex-row items-center gap-4">
+						<Image
+							source="https://i.imgur.com/5Hsj4tJ.jpeg"
+							placeholder={{ blurhash }}
+							contentFit="cover"
+							transition={500}
+							className="h-20 w-20 rounded-2xl"
+						/>
+						<View className="flex-1">
+							<Text className="text-2xl font-bold text-white">{profile.name}</Text>
+							<Text className="text-primary-100 text-base">{profile.handle}</Text>
+							<Text className="mt-1 text-sm text-white/70">{profile.base}</Text>
+						</View>
 					</View>
-				</View>
-				<View className="mt-4 flex flex-row items-center justify-between">
-					<Text className="text-primary-100 text-sm font-semibold tracking-wide uppercase">
-						{profile.role}
-					</Text>
-					<View className="rounded-full bg-white/10 px-4 py-2">
-						<Text className="text-sm font-semibold text-white">
-							{profile.streak} dias ativos
+					<View className="mt-4 flex flex-row items-center justify-between">
+						<Text className="text-primary-100 text-sm font-semibold tracking-wide uppercase">
+							{profile.role}
 						</Text>
+						<View className="rounded-full bg-white/10 px-4 py-2">
+							<Text className="text-sm font-semibold text-white">
+								{profile.streak} dias ativos
+							</Text>
+						</View>
 					</View>
-				</View>
-			</LinearGradient>
+				</LinearGradient>
+			</View>
 
-			<View className="flex flex-row flex-wrap gap-4">
+			<View className="flex w-full flex-row flex-wrap gap-4 px-5">
 				{stats.map((stat) => (
 					<View
 						key={stat.label}
-						className="min-h-[120px] flex-1 rounded-2xl border border-white/10 bg-white/5 p-4"
+						className="min-h-[120px] rounded-2xl border border-white/10 bg-white/5 p-4"
+						style={{ width: CARD_WIDTH / 2 - 8 }}
 					>
 						<Text className="text-3xl font-bold text-white">{stat.value}</Text>
 						<Text className="text-primary-100 mt-1 text-sm font-semibold uppercase">
@@ -146,20 +157,20 @@ export default function Profile() {
 				))}
 			</View>
 
-			<View className="gap-3">
-				<Text className="text-primary-100 text-sm font-semibold tracking-wide uppercase">
+			<View className="w-full gap-3">
+				<Text className="text-primary-100 pl-5 text-sm font-semibold tracking-wide uppercase">
 					Reconhecimentos
 				</Text>
-				<ScrollView
+				<StyledScrollView
 					horizontal
 					showsHorizontalScrollIndicator={false}
-					className="-mx-6 px-6"
+					contentContainerClassName="px-5"
 				>
-					<View className="flex flex-row gap-4">
+					<View className="flex h-40 flex-row gap-4">
 						{badges.map((badge) => (
 							<View
 								key={badge.title}
-								className="w-60 rounded-2xl border border-white/10 bg-white/5 p-4"
+								className="h-full w-60 rounded-2xl border border-white/10 bg-white/5 p-4"
 							>
 								<View className="h-12 w-12 items-center justify-center rounded-2xl bg-white/10">
 									<Text className="text-base font-bold text-white">
@@ -175,18 +186,18 @@ export default function Profile() {
 							</View>
 						))}
 					</View>
-				</ScrollView>
+				</StyledScrollView>
 			</View>
 
-			<View className="gap-3">
+			<View className="w-full gap-3 px-5">
 				<Text className="text-primary-100 text-sm font-semibold tracking-wide uppercase">
 					Últimas ações
 				</Text>
-				<View className="gap-3">
+				<View className="w-full gap-3">
 					{activity.map((item) => (
 						<View
 							key={item.title}
-							className="rounded-2xl border border-white/5 bg-white/5 p-4"
+							className="w-full rounded-2xl border border-white/5 bg-white/5 p-4"
 						>
 							<Text className="text-base font-semibold text-white">{item.title}</Text>
 							<Text className="mt-1 text-sm text-white/70">{item.description}</Text>
@@ -198,18 +209,20 @@ export default function Profile() {
 				</View>
 			</View>
 
-			<Card className="gap-3">
-				<Text className="text-lg font-bold text-white">Próximos focos</Text>
-				{roadmap.map((goal) => (
-					<View key={goal.title} className="rounded-2xl bg-white/10 p-4">
-						<Text className="text-base font-semibold text-white">{goal.title}</Text>
-						<Text className="mt-2 text-sm text-white/70">{goal.eta}</Text>
-						<Text className="text-primary-100 mt-1 text-xs tracking-wide uppercase">
-							{goal.status}
-						</Text>
-					</View>
-				))}
-			</Card>
-		</ScrollView>
+			<View className="w-full px-5">
+				<Card className="w-full gap-3">
+					<Text className="text-lg font-bold text-white">Próximos focos</Text>
+					{roadmap.map((goal) => (
+						<View key={goal.title} className="w-full rounded-2xl bg-white/10 p-4">
+							<Text className="text-base font-semibold text-white">{goal.title}</Text>
+							<Text className="mt-2 text-sm text-white/70">{goal.eta}</Text>
+							<Text className="text-primary-100 mt-1 text-xs tracking-wide uppercase">
+								{goal.status}
+							</Text>
+						</View>
+					))}
+				</Card>
+			</View>
+		</StyledScrollView>
 	);
 }
