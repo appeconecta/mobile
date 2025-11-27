@@ -1,12 +1,12 @@
 import { useImage } from "expo-image";
 import { GoogleMaps } from "expo-maps";
 import { styled } from "nativewind";
-import { useMemo } from "react";
-import { ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { useMemo, useState } from "react";
+import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 // Components
-import { Tag } from "@/components/tag";
+import { TagGroup } from "@/components/tag-group";
 import { useStatusBarStyle } from "@/hooks/use-status-bar-style";
 
 // Types
@@ -46,6 +46,14 @@ export default function Community() {
 			}),
 		[]
 	);
+
+	const filterTags = [
+		{ id: 'lixo', name: 'Focos de Lixo' },
+		{ id: 'coleta', name: 'Pontos de Coleta' },
+		{ id: 'lixeiras', name: 'Lixeiras' },
+	];
+
+	const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
 
 	return (
 		<View
@@ -114,16 +122,11 @@ export default function Community() {
 					<StyledFilterIcon width={18} height={18} className="fill-white" />
 					<Text className="text-base font-bold text-white">Filtros</Text>
 				</View>
-				<ScrollView
-					className="w-full flex-1"
-					contentContainerClassName="flex-row items-center justify-start gap-2  pr-5"
-					horizontal
-					showsHorizontalScrollIndicator={false}
-				>
-					<Tag name="Focos de Lixo" />
-					<Tag name="Pontos de Coleta" />
-					<Tag name="Lixeiras" />
-				</ScrollView>
+				<TagGroup
+					tags={filterTags}
+					selected={selectedFilters}
+					onSelect={setSelectedFilters}
+				/>
 			</View>
 			{/* Gradient for header readability */}
 			<LinearGradient

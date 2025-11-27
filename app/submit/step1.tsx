@@ -18,6 +18,8 @@ export default function SubmitFormStep1() {
 		canAskAgain: boolean;
 	} | null>(null);
 
+	// TODO: Expo is bugged, so when the user selects "Ask everytime", Expo thinks the permission is denied.
+
 	useEffect(() => {
 		const subscription = AppState.addEventListener("change", (nextAppState) => {
 			if (appState.current.match(/inactive|background/) && nextAppState === "active") {
