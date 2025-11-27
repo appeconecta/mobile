@@ -81,7 +81,7 @@ export default function Account() {
 	useStatusBarStyle("dark");
 
 	const [currentSection, setCurrentSection] = useState<"posts" | "analytics">("analytics");
-	const scrollRef = useRef<ScrollView | null>(null);
+	const sectionsScrollRef = useRef<ScrollView | null>(null);
 	const hasSyncedInitialSection = useRef(false);
 
 	const position = useSharedValue(POSTS_POSITION);
@@ -96,7 +96,7 @@ export default function Account() {
 
 	useEffect(() => {
 		const offset = currentSection === "posts" ? 0 : SCREEN_WIDTH;
-		scrollRef.current?.scrollTo({
+		sectionsScrollRef.current?.scrollTo({
 			x: offset,
 			animated: hasSyncedInitialSection.current,
 		});
@@ -128,125 +128,150 @@ export default function Account() {
 	};
 
 	return (
-		<View className="bg-bg-300 flex flex-1 items-center justify-start">
-			{/* Header */}
-			<View
-				className="flex w-full gap-7 bg-[#f2f7f1] shadow-2xl"
-				style={{
-					paddingTop: insets.top + 16,
-				}}
-			>
-				<View className="flex w-full flex-row items-center justify-between px-5">
-					<View className="w-5" />
-					<Text className="text-primary-600 text-xl font-bold">Fulano da Silva</Text>
-					<Pressable
-						android_ripple={{
-							radius: 24,
-							foreground: true,
-							color: "rgba(0, 0, 0, 0.05)",
-						}}
-						className="overflow-hidden rounded-full p-2"
-					>
-						<StyledDehazeIcon className="fill-primary-600" width={20} height={20} />
-					</Pressable>
-				</View>
-
-				<View className="flex flex-col items-center justify-center gap-3">
-					<Image
-						source={"https://i.imgur.com/5Hsj4tJ.jpeg"}
-						contentFit="cover"
-						transition={1000}
-						className="h-24 w-24 rounded-full"
-					/>
-					<Text className="text-primary-600 text-lg font-bold">@theduardomaciel</Text>
-				</View>
-
-				<View className="flex w-full flex-row items-center justify-evenly">
-					<View className="flex flex-col items-center justify-center gap-1">
-						<Text className="text-primary-600 text-2xl font-black">115</Text>
-						<Text className="text-primary-300 text-sm font-medium">Relatórios</Text>
-					</View>
-					<View className="flex flex-col items-center justify-center gap-1">
-						<Text className="text-primary-600 text-2xl font-black">45</Text>
-						<Text className="text-primary-300 text-sm font-medium">Confirmações</Text>
-					</View>
-					<View className="flex flex-col items-center justify-center gap-1">
-						<Text className="text-primary-600 text-2xl font-black">24</Text>
-						<Text className="text-primary-300 text-sm font-medium">Comentários</Text>
-					</View>
-				</View>
-
-				<View className="flex w-full flex-row items-center justify-center">
-					<TouchableOpacity
-						activeOpacity={0.8}
-						className={cn(
-							"border-primary-300 flex-1 flex-row items-center justify-center gap-2 border-b-0 py-4 opacity-40",
-							{
-								"opacity-100": currentSection === "posts",
-							}
-						)}
-						onPress={() => {
-							handleSectionChange("posts");
-						}}
-					>
-						<StyledGridViewIcon className="fill-primary-300" width={24} height={24} />
-					</TouchableOpacity>
-					<TouchableOpacity
-						activeOpacity={0.8}
-						className={cn(
-							"border-primary-300 flex-1 flex-row items-center justify-center gap-2 border-b-0 opacity-40",
-							{
-								"opacity-100": currentSection === "analytics",
-							}
-						)}
-						onPress={() => {
-							handleSectionChange("analytics");
-						}}
-					>
-						<StyledAnalyticsIcon className="fill-primary-300" width={24} height={24} />
-					</TouchableOpacity>
-
-					<Animated.View
-						className="bg-primary-300 absolute bottom-0 left-0 h-0.5 -translate-x-1/2 rounded-full"
-						style={[animatedStyle, { width: BAR_WIDTH }]}
-					></Animated.View>
-				</View>
-			</View>
-
-			<ScrollView
-				ref={scrollRef}
-				horizontal
-				pagingEnabled
-				showsHorizontalScrollIndicator={false}
-				onMomentumScrollEnd={handleMomentumScrollEnd}
-				scrollEventThrottle={16}
-				className="w-full"
-			>
-				<View style={{ width: SCREEN_WIDTH }}>
-					<FlashList
-						data={ITEMS}
-						renderItem={({ item, index }) => (
-							<FeedItem {...item} style={index === 0 ? animatedStyle : undefined} />
-						)}
-						keyExtractor={(item) => item.id}
-						showsVerticalScrollIndicator={false}
-						className="relative w-full flex-1"
-						style={{ flex: 1, width: "100%" }}
-						contentContainerStyle={{
-							paddingTop: 20,
-							paddingInline: 20,
-							paddingBottom: insets.bottom + 128,
-						}}
-					/>
-				</View>
+		<ScrollView
+			className="bg-bg-300 flex-1"
+			showsVerticalScrollIndicator={false}
+			contentContainerStyle={{
+				minHeight: SCREEN_HEIGHT + insets.top,
+				paddingBottom: insets.bottom + 32,
+			}}
+		>
+			<View className="flex flex-1 items-center justify-start">
+				{/* Header */}
 				<View
-					className="flex flex-1 items-center justify-start"
-					style={{ width: SCREEN_WIDTH }}
+					className="flex w-full gap-7 bg-[#f2f7f1] shadow-2xl"
+					style={{
+						paddingTop: insets.top + 16,
+					}}
 				>
-					<Text className="text-primary-600 mt-16 text-center">Em breve!</Text>
+					<View className="flex w-full flex-row items-center justify-between px-5">
+						<View className="w-5" />
+						<Text className="text-primary-600 text-xl font-bold">Fulano da Silva</Text>
+						<Pressable
+							android_ripple={{
+								radius: 24,
+								foreground: true,
+								color: "rgba(0, 0, 0, 0.05)",
+							}}
+							className="overflow-hidden rounded-full p-2"
+						>
+							<StyledDehazeIcon className="fill-primary-600" width={20} height={20} />
+						</Pressable>
+					</View>
+
+					<View className="flex flex-col items-center justify-center gap-3">
+						<Image
+							source={"https://i.imgur.com/5Hsj4tJ.jpeg"}
+							contentFit="cover"
+							transition={1000}
+							className="h-24 w-24 rounded-full"
+						/>
+						<Text className="text-primary-600 text-lg font-bold">@theduardomaciel</Text>
+					</View>
+
+					<View className="flex w-full flex-row items-center justify-evenly">
+						<View className="flex flex-col items-center justify-center gap-1">
+							<Text className="text-primary-600 text-2xl font-black">115</Text>
+							<Text className="text-primary-300 text-sm font-medium">Relatórios</Text>
+						</View>
+						<View className="flex flex-col items-center justify-center gap-1">
+							<Text className="text-primary-600 text-2xl font-black">45</Text>
+							<Text className="text-primary-300 text-sm font-medium">
+								Confirmações
+							</Text>
+						</View>
+						<View className="flex flex-col items-center justify-center gap-1">
+							<Text className="text-primary-600 text-2xl font-black">24</Text>
+							<Text className="text-primary-300 text-sm font-medium">
+								Comentários
+							</Text>
+						</View>
+					</View>
+
+					<View className="flex w-full flex-row items-center justify-center">
+						<TouchableOpacity
+							activeOpacity={0.8}
+							className={cn(
+								"border-primary-300 flex-1 flex-row items-center justify-center gap-2 border-b-0 py-4 opacity-40",
+								{
+									"opacity-100": currentSection === "posts",
+								}
+							)}
+							onPress={() => {
+								handleSectionChange("posts");
+							}}
+						>
+							<StyledGridViewIcon
+								className="fill-primary-300"
+								width={24}
+								height={24}
+							/>
+						</TouchableOpacity>
+						<TouchableOpacity
+							activeOpacity={0.8}
+							className={cn(
+								"border-primary-300 flex-1 flex-row items-center justify-center gap-2 border-b-0 opacity-40",
+								{
+									"opacity-100": currentSection === "analytics",
+								}
+							)}
+							onPress={() => {
+								handleSectionChange("analytics");
+							}}
+						>
+							<StyledAnalyticsIcon
+								className="fill-primary-300"
+								width={24}
+								height={24}
+							/>
+						</TouchableOpacity>
+
+						<Animated.View
+							className="bg-primary-300 absolute bottom-0 left-0 h-0.5 -translate-x-1/2 rounded-full"
+							style={[animatedStyle, { width: BAR_WIDTH }]}
+						></Animated.View>
+					</View>
 				</View>
-			</ScrollView>
-		</View>
+
+				<ScrollView
+					ref={sectionsScrollRef}
+					horizontal
+					pagingEnabled
+					showsHorizontalScrollIndicator={false}
+					onMomentumScrollEnd={handleMomentumScrollEnd}
+					scrollEventThrottle={16}
+					className="w-full"
+				>
+					<View style={{ width: SCREEN_WIDTH }}>
+						<FlashList
+							data={ITEMS}
+							renderItem={({ item, index }) => (
+								<FeedItem
+									{...item}
+									style={index === 0 ? animatedStyle : undefined}
+								/>
+							)}
+							keyExtractor={(item) => item.id}
+							scrollEnabled={false}
+							showsVerticalScrollIndicator={false}
+							className="relative w-full"
+							style={{ width: "100%" }}
+							contentContainerStyle={{
+								paddingTop: 20,
+								paddingHorizontal: 20,
+								paddingBottom: 24,
+							}}
+						/>
+					</View>
+					<View
+						className="flex flex-1 items-center justify-start"
+						style={{ width: SCREEN_WIDTH }}
+					>
+						<Text className="text-primary-600 mt-16 text-center">Em breve!</Text>
+					</View>
+				</ScrollView>
+			</View>
+		</ScrollView>
 	);
 }
 
