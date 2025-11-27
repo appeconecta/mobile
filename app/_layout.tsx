@@ -1,8 +1,10 @@
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
+import { View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
+import { ThemeProvider, useThemePreference } from "@/providers/theme-provider";
 import { ExtendedStackNavigationOptions } from "expo-router/build/layouts/StackClient";
 import "../global.css";
 
@@ -30,32 +32,41 @@ const screenWithHeaderOptions = (title: string) =>
 export default function RootLayout() {
 	return (
 		<GestureHandlerRootView style={{ flex: 1 }}>
-			<BottomSheetModalProvider>
-				<Stack
-					screenOptions={{
-						headerShown: false,
-					}}
-				>
-					<Stack.Screen name="onboarding/index" />
-					<Stack.Screen name="(tabs)" />
-					<Stack.Screen
-						name="account/credits"
-						options={screenWithHeaderOptions("Créditos")}
-					/>
-					<Stack.Screen
-						name="account/profile"
-						options={screenWithHeaderOptions("Perfil")}
-					/>
-					<Stack.Screen
-						name="account/settings"
-						options={screenWithHeaderOptions("Configurações")}
-					/>
-					<Stack.Screen
-						name="submit"
-						options={screenWithHeaderOptions("Adicionar Denúncia")}
-					/>
-				</Stack>
-			</BottomSheetModalProvider>
+			<ThemeProvider>
+				<BottomSheetModalProvider>
+					<AppNavigator />
+				</BottomSheetModalProvider>
+			</ThemeProvider>
 		</GestureHandlerRootView>
+	);
+}
+
+function AppNavigator() {
+	const { themeStyle } = useThemePreference();
+
+	return (
+		<View style={[{ flex: 1 }, themeStyle]}>
+			<Stack
+				screenOptions={{
+					headerShown: false,
+				}}
+			>
+				<Stack.Screen name="onboarding/index" />
+				<Stack.Screen name="(tabs)" />
+				<Stack.Screen
+					name="account/credits"
+					options={screenWithHeaderOptions("Créditos")}
+				/>
+				<Stack.Screen name="account/profile" options={screenWithHeaderOptions("Perfil")} />
+				<Stack.Screen
+					name="account/settings"
+					options={screenWithHeaderOptions("Configurações")}
+				/>
+				<Stack.Screen
+					name="submit"
+					options={screenWithHeaderOptions("Adicionar Denúncia")}
+				/>
+			</Stack>
+		</View>
 	);
 }

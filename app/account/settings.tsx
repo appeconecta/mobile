@@ -1,5 +1,6 @@
 import { Card } from "@/components/card";
 import { useStatusBarStyle } from "@/hooks/use-status-bar-style";
+import { useThemePreference } from "@/providers/theme-provider";
 import { useState } from "react";
 import { Pressable, ScrollView, Switch, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -36,14 +37,44 @@ const dataControls = [
 	},
 ];
 
+const themeOptions = [
+	{
+		key: "system" as const,
+		title: "Sistema",
+		description: "Acompanha o modo configurado no dispositivo",
+	},
+	{
+		key: "light" as const,
+		title: "Claro",
+		description: "Paleta luminosa ideal para ambientes externos",
+	},
+	{
+		key: "dark" as const,
+		title: "Escuro",
+		description: "Contraste alto para leitura noturna",
+	},
+];
+
 export default function Settings() {
 	const insets = useSafeAreaInsets();
 	const [notifications, setNotifications] = useState(notificationDefaults);
+	const {
+		preference: themePreference,
+		setPreference: setThemePreference,
+		colorScheme,
+	} = useThemePreference();
 	useStatusBarStyle("light");
 
 	const toggleNotification = (key: keyof typeof notificationDefaults) => {
 		setNotifications((prev) => ({ ...prev, [key]: !prev[key] }));
 	};
+
+	const resolvedPreferenceLabel =
+		themePreference === "system"
+			? `Sistema (${colorScheme === "dark" ? "escuro" : "claro"})`
+			: themePreference === "light"
+				? "Claro"
+				: "Escuro";
 
 	return (
 		<ScrollView
@@ -58,6 +89,49 @@ export default function Settings() {
 					Ajuste alertas, privacidade e dados sincronizados com a rede Appe Conecta.
 				</Text>
 			</Card>
+
+			<View className="gap-3">
+				<Text className="text-primary-100 text-sm font-semibold tracking-wide uppercase">
+					Aparência
+				</Text>
+				<View className="rounded-3xl border border-white/10 bg-white/5">
+					{themeOptions.map((option, index) => (
+						<Pressable
+							key={option.key}
+							android_ripple={{ color: "rgba(255,255,255,0.12)", radius: 160 }}
+							className="flex flex-row items-center justify-between gap-3 px-5 py-4"
+							style={{
+								borderBottomWidth: index === themeOptions.length - 1 ? 0 : 1,
+								borderColor: "rgba(255,255,255,0.07)",
+							}}
+							onPress={() => setThemePreference(option.key)}
+						>
+							<View className="flex-1">
+								<Text className="text-base font-semibold text-white">
+									{option.title}
+								</Text>
+								<Text className="mt-1 text-sm text-white/70">
+									{option.description}
+								</Text>
+							</View>
+							<View
+								className={`h-6 w-6 items-center justify-center rounded-full border ${
+									themePreference === option.key
+										? "border-primary-100 bg-primary-400"
+										: "border-white/30"
+								}`}
+							>
+								{themePreference === option.key && (
+									<View className="h-2.5 w-2.5 rounded-full bg-white" />
+								)}
+							</View>
+						</Pressable>
+					))}
+				</View>
+				<Text className="text-xs text-white/60">
+					Preferência atual: {resolvedPreferenceLabel}
+				</Text>
+			</View>
 
 			<View className="gap-3">
 				<Text className="text-primary-100 text-sm font-semibold tracking-wide uppercase">
