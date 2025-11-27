@@ -91,14 +91,14 @@ export default function Community() {
 					<Text className="text-primary-600 text-start text-xl font-medium">
 						Maceió, AL
 					</Text>
-					<StyledVerifiedIcon width={14} height={14} />
+					<StyledVerifiedIcon width={14} height={14} className="fill-primary-100" />
 				</View>
 			</View>
 			{/* Search */}
 			<View className="z-50 mb-1 flex w-full flex-col items-start justify-start gap-3 px-5">
 				<View className="relative w-full rounded-full shadow-md">
 					<TextInput
-						className="bg-bg-100 text-primary-600 placeholder:text-border-primary font-regular w-full rounded-full py-3 pl-12 text-base"
+						className="bg-bg-100 text-primary-600 font-regular w-full rounded-full py-3 pl-12 text-base placeholder:text-[#A3A3A3]"
 						placeholder="Pesquisar por focos de lixo e muito mais..."
 					/>
 					<StyledSearchIcon

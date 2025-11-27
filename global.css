@@ -5,19 +5,27 @@
 @import "nativewind/theme";
 
 @theme {
-	--color-primary-100: #c9e2c9;
-	--color-primary-200: #aed296;
-	--color-primary-300: #77b883;
-	--color-primary-400: #4f9d69;
-	--color-primary-500: #346259;
-	--color-primary-600: #26413c;
-	--color-primary: var(--color-primary-500);
-	--color-primary-foreground: #f3f7f4;
+	--color-primary-100: var(--color-green-100);
+	--color-primary-200: var(--color-green-200);
+	--color-primary-300: var(--color-green-300);
+	--color-primary-400: var(--color-green-400);
+	--color-primary-500: var(--color-green-500);
+	--color-primary-600: var(--color-green-600);
 
-	--color-bg-100: #f3f7f4;
-	--color-bg-200: #f6f7eb;
-	--color-bg-300: #e6eada;
-	--color-background: var(--color-bg-100);
+	--color-bg-100: var(--color-neutral-100);
+	--color-bg-200: var(--color-neutral-200);
+	--color-bg-300: var(--color-neutral-300);
+}
 
-	--color-border-primary: #a3a3a3;
+:root {
+	--color-primary-100: var(--color-green-100);
+	--color-primary-200: var(--color-green-200);
+	--color-primary-300: var(--color-green-300);
+	--color-primary-400: var(--color-green-400);
+	--color-primary-500: var(--color-green-500);
+	--color-primary-600: var(--color-green-600);
+
+	--color-bg-100: var(--color-neutral-100);
+	--color-bg-200: var(--color-neutral-200);
+	--color-bg-300: var(--color-neutral-300);
 }
