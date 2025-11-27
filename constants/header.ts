@@ -7,6 +7,7 @@ export const headerOptions: ExtendedStackNavigationOptions = {
 	},
 	headerTitleAlign: "center",
 	headerTitleStyle: {
+		fontSize: 16,
 		color: "#FFFFFF",
 	},
 	headerTintColor: "#FFFFFF",

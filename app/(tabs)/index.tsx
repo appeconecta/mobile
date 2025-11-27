@@ -3,7 +3,7 @@ import { styled } from "nativewind";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 
 // Components
 import { Card } from "@/components/card";
@@ -15,7 +15,9 @@ import AddIcon from "@/assets/icons/add.svg";
 import RecycleIcon from "@/assets/icons/recycle.svg";
 
 // Types
+import { useCameraPermissions } from "expo-camera";
 import { GoogleMapsColorScheme } from "expo-maps/build/google/GoogleMaps.types";
+import { useCallback } from "react";
 
 const StyledRecycleIcon = styled(RecycleIcon);
 
@@ -24,7 +26,18 @@ const blurhash =
 
 export default function Index() {
 	const insets = useSafeAreaInsets();
+	const router = useRouter();
+	const [permission] = useCameraPermissions();
+
 	useStatusBarStyle("dark");
+
+	const goToSubmit = useCallback(() => {
+		if (!permission?.granted) {
+			router.push("/(permissions)/camera");
+		} else {
+			router.push("/submit/step1");
+		}
+	}, []);
 
 	return (
 		<ScrollView
@@ -56,15 +69,13 @@ export default function Index() {
 				</Link>
 			</View>
 
-			<Link href={"/submit/step1"} asChild>
-				<TouchableOpacity activeOpacity={0.8} className="w-full px-5">
-					<Card className="w-full flex-row gap-3 py-6">
-						<AddIcon />
-						<Text className="text-2xl font-bold text-white">Adicionar relatório</Text>
-						<StyledRecycleIcon className="absolute -top-4 right-0 rotate-9" />
-					</Card>
-				</TouchableOpacity>
-			</Link>
+			<TouchableOpacity activeOpacity={0.8} className="w-full px-5" onPress={goToSubmit}>
+				<Card className="w-full flex-row gap-3 py-6">
+					<AddIcon />
+					<Text className="text-2xl font-bold text-white">Adicionar relatório</Text>
+					<StyledRecycleIcon className="absolute -top-4 right-0 rotate-9" />
+				</Card>
+			</TouchableOpacity>
 
 			<Text className="text-primary-600 self-start pl-5 text-2xl font-bold">Resumo</Text>
 
