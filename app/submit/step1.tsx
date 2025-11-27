@@ -1,6 +1,6 @@
 import { useFocusEffect } from "expo-router";
-import { useCallback, useState } from "react";
-import { View } from "react-native";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { AppState, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Camera as ExpoCamera } from "expo-camera";
@@ -10,12 +10,30 @@ import { Camera } from "@/components/camera";
 
 export default function SubmitFormStep1() {
 	const insets = useSafeAreaInsets();
+	const appState = useRef(AppState.currentState);
 
 	const [isFocused, setIsFocused] = useState(false);
 	const [permission, setPermission] = useState<{
 		granted: boolean;
 		canAskAgain: boolean;
 	} | null>(null);
+
+	useEffect(() => {
+		const subscription = AppState.addEventListener("change", (nextAppState) => {
+			if (appState.current.match(/inactive|background/) && nextAppState === "active") {
+				console.log("App has come to the foreground!");
+				// Re-check camera permission
+				checkCameraPermissions();
+			}
+
+			appState.current = nextAppState;
+			console.log("AppState", appState.current);
+		});
+
+		return () => {
+			subscription.remove();
+		};
+	}, []);
 
 	useFocusEffect(
 		// Callback should be wrapped in `React.useCallback` to avoid running the effect too often.
@@ -25,13 +43,7 @@ export default function SubmitFormStep1() {
 			setIsFocused(true);
 			console.log("Checking camera permission...");
 			// Check camera permission
-			ExpoCamera.getCameraPermissionsAsync().then((perm) => {
-				console.log("Camera permission:", perm);
-				setPermission({
-					granted: perm.granted,
-					canAskAgain: perm.canAskAgain,
-				});
-			});
+			checkCameraPermissions();
 
 			// Return function is invoked whenever the route gets out of focus.
 			return () => {
@@ -39,6 +51,16 @@ export default function SubmitFormStep1() {
 			};
 		}, [])
 	);
+
+	function checkCameraPermissions() {
+		ExpoCamera.getCameraPermissionsAsync().then((perm) => {
+			console.log("Camera permission:", perm);
+			setPermission({
+				granted: perm.granted,
+				canAskAgain: perm.canAskAgain,
+			});
+		});
+	}
 
 	return (
 		<View
