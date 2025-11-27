@@ -4,58 +4,20 @@
 
 @import "nativewind/theme";
 
-@layer base {
-	:root {
-		color-scheme: light;
-		--palette-primary-100: #c9e2c9;
-		--palette-primary-200: #aed296;
-		--palette-primary-300: #77b883;
-		--palette-primary-400: #4f9d69;
-		--palette-primary-500: #346259;
-		--palette-primary-600: #26413c;
-		--palette-bg-100: #f3f7f4;
-		--palette-bg-200: #f6f7eb;
-		--palette-bg-300: #e6eada;
-		--palette-surface: #f2f7f1;
-		--palette-surface-muted: #e4eddf;
-		--palette-border-primary: #a3a3a3;
-		--palette-primary-foreground: #f3f7f4;
-	}
-
-	[data-color-scheme="dark"] {
-		color-scheme: dark;
-		--palette-primary-100: #e0f5e5;
-		--palette-primary-200: #b4dfc5;
-		--palette-primary-300: #78c4a1;
-		--palette-primary-400: #4f9d69;
-		--palette-primary-500: #2f7350;
-		--palette-primary-600: #173624;
-		--palette-bg-100: #050f0b;
-		--palette-bg-200: #0b1811;
-		--palette-bg-300: #14241b;
-		--palette-surface: #0f1c15;
-		--palette-surface-muted: #1c2b23;
-		--palette-border-primary: #3c4b43;
-		--palette-primary-foreground: #05150d;
-	}
-}
-
 @theme {
-	--color-primary-100: var(--palette-primary-100);
-	--color-primary-200: var(--palette-primary-200);
-	--color-primary-300: var(--palette-primary-300);
-	--color-primary-400: var(--palette-primary-400);
-	--color-primary-500: var(--palette-primary-500);
-	--color-primary-600: var(--palette-primary-600);
+	--color-primary-100: #c9e2c9;
+	--color-primary-200: #aed296;
+	--color-primary-300: #77b883;
+	--color-primary-400: #4f9d69;
+	--color-primary-500: #346259;
+	--color-primary-600: #26413c;
 	--color-primary: var(--color-primary-500);
-	--color-primary-foreground: var(--palette-primary-foreground);
+	--color-primary-foreground: #f3f7f4;
 
-	--color-bg-100: var(--palette-bg-100);
-	--color-bg-200: var(--palette-bg-200);
-	--color-bg-300: var(--palette-bg-300);
-	--color-surface: var(--palette-surface);
-	--color-surface-muted: var(--palette-surface-muted);
+	--color-bg-100: #f3f7f4;
+	--color-bg-200: #f6f7eb;
+	--color-bg-300: #e6eada;
 	--color-background: var(--color-bg-100);
 
-	--color-border-primary: var(--palette-border-primary);
+	--color-border-primary: #a3a3a3;
 }
