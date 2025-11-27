@@ -1,4 +1,5 @@
 import { useStatusBarStyle } from "@/hooks/use-status-bar-style";
+import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import { FlashList } from "@shopify/flash-list";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -19,12 +20,15 @@ import Animated, {
 	withSpring,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { SvgProps } from "react-native-svg";
 
 import { cn } from "@/lib/utils";
 import { styled } from "nativewind";
 
 // Components
+import { BottomSheet } from "@/components/bottom-sheet";
 import { Image } from "@/components/ui/image";
+import { LinearGradient } from "@/components/ui/linear-gradient";
 
 // Icons
 import AnalyticsIcon from "@/assets/icons/analytics.svg";
@@ -32,16 +36,22 @@ import CheckCircleIcon from "@/assets/icons/check_circle.svg";
 import DehazeIcon from "@/assets/icons/dehaze.svg";
 import GridViewIcon from "@/assets/icons/grid_view.svg";
 import PendingIcon from "@/assets/icons/pending.svg";
-import { BottomSheet } from "@/components/bottom-sheet";
-import { LinearGradient } from "@/components/ui/linear-gradient";
-import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
-import { SvgProps } from "react-native-svg";
+
+import ForYouIcon from "@/assets/icons/for_you.svg";
+import InfoIcon from "@/assets/icons/info.svg";
+import LogoutIcon from "@/assets/icons/logout.svg";
+import SettingsIcon from "@/assets/icons/settings.svg";
 
 const StyledDehazeIcon = styled(DehazeIcon);
 const StyledAnalyticsIcon = styled(AnalyticsIcon);
 const StyledGridViewIcon = styled(GridViewIcon);
 const StyledCheckCircleIcon = styled(CheckCircleIcon);
 const StyledPendingIcon = styled(PendingIcon);
+
+const StyledForYouIcon = styled(ForYouIcon);
+const StyledSettingsIcon = styled(SettingsIcon);
+const StyledInfoIcon = styled(InfoIcon);
+const StyledLogoutIcon = styled(LogoutIcon);
 
 const springConfig = {
 	damping: 12,
@@ -323,6 +333,30 @@ export default function Account() {
 						<Text className="text-primary-200 text-2xl font-bold">X</Text>
 					</Pressable>
 				</View>
+
+				<View className="flex w-full flex-col items-start justify-start gap-4 p-12">
+					<AccountModalButton
+						icon={StyledForYouIcon}
+						title="Perfil"
+						description="como a comunidade lhe vê"
+					/>
+					<AccountModalButton
+						icon={StyledSettingsIcon}
+						title="Conta"
+						description="configurações"
+					/>
+					<AccountModalButton
+						icon={StyledInfoIcon}
+						title="Info"
+						description="agradecimentos e detalhes técnicos"
+					/>
+					<AccountModalButton
+						icon={StyledLogoutIcon}
+						title="Log-out"
+						description="nos vemos em breve!"
+						isLast
+					/>
+				</View>
 			</BottomSheet>
 		</ScrollView>
 	);
@@ -391,16 +425,31 @@ interface AccountModalButtonProps {
 	icon: React.ComponentType<SvgProps>;
 	title: string;
 	description: string;
+	isLast?: boolean;
 }
 
-function AccountModalButton({ onPress, title, description }: AccountModalButtonProps) {
+function AccountModalButton({
+	onPress,
+	icon: Icon,
+	title,
+	description,
+	isLast,
+}: AccountModalButtonProps) {
 	return (
-		<TouchableOpacity activeOpacity={0.8} className="flex flex-row items-center justify-start">
-			<View></View>
-			<View>
-				<Text>Teste</Text>
-				<Text>Teste</Text>
-			</View>
-		</TouchableOpacity>
+		<>
+			<TouchableOpacity
+				activeOpacity={0.8}
+				className="flex flex-row items-center justify-start gap-9"
+			>
+				<View className="h-12 w-12 items-center justify-center">
+					<Icon width={32} height={32} className="fill-primary-400" />
+				</View>
+				<View className="flex flex-1 flex-col items-start justify-start gap-1">
+					<Text className="text-primary-400 text-3xl font-bold">{title}</Text>
+					<Text className="text-primary-200 text-sm font-normal">{description}</Text>
+				</View>
+			</TouchableOpacity>
+			{!isLast && <View className="bg-primary-200 my-2 h-px w-full opacity-20" />}
+		</>
 	);
 }
