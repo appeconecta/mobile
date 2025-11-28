@@ -7,8 +7,10 @@ import { themes } from "@/constants/theme";
 
 // Hooks
 import { useStatusBarStyle } from "@/hooks/use-status-bar-style";
+import { useSession } from "@/providers/session-provider";
 
 export default function SubmitFormLayout() {
+	const { token } = useSession();
 	useStatusBarStyle("light");
 
 	// Shared submit form state across steps
@@ -34,6 +36,53 @@ export default function SubmitFormLayout() {
 		setDescription("");
 	}
 
+	async function onSubmit() {
+		if (!token) return;
+
+		try {
+			const res = await fetch("https://econecta-api.vercel.app/api/trashspots", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${token}`,
+				},
+				body: JSON.stringify({
+					name: "Ponto de Lixo",
+					description: description,
+					location: {
+						latitude: 23.5,
+						longitude: 23.5,
+						city: "Maceió",
+						postalCode: "Rua das Árvores, Centro",
+					},
+				}),
+			});
+			const data = await res.json();
+
+			if (!photos?.[0]) {
+				return;
+			}
+
+			const form = new FormData();
+
+			form.append("image", {
+				uri: photos[0],
+				type: "image/jpeg",
+				name: `photo-${Date.now()}.jpg`,
+			} as any);
+			form.append("target", "trashspot");
+			form.append("targetId", data.data.id);
+
+			await fetch("https://econecta-api.vercel.app/api/upload", {
+				method: "POST",
+				headers: { Authorization: `Bearer ${token}` },
+				body: form,
+			});
+		} catch (e) {
+			console.error(e);
+		}
+	}
+
 	const value = useMemo(
 		() => ({
 			photos,
@@ -45,6 +94,7 @@ export default function SubmitFormLayout() {
 			description,
 			setDescription,
 			resetForm,
+			onSubmit,
 		}),
 		[photos, photosBase64, tags, description]
 	);
@@ -99,6 +149,7 @@ type SubmitFormContextType = {
 	description: string;
 	setDescription: (d: string) => void;
 	resetForm: () => void;
+	onSubmit: () => void;
 };
 
 const SubmitFormContext = createContext<SubmitFormContextType | null>(null);
