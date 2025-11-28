@@ -82,13 +82,14 @@ export default function Reports() {
 			const data = await res.json();
 
 			const formattedData = data.data.map((item: any) => {
+				console.log("Location", item.location);
 				const postalCode = item.location.postalCode;
 				const city = item.location.city;
 
 				return {
 					id: item.id,
-					author: "@faltaintegrar",
-					address: `${postalCode || ''}${postalCode ? ", " : ""}${city}`,
+					author: "@" + (item?.registeredBy?.email?.split("@")?.[0] ?? "anonimo"),
+					address: `${postalCode || ""}${postalCode ? ", " : ""}${city}`,
 					imageUrl: "https://i.imgur.com/oF6I8fT.jpeg",
 				};
 			});

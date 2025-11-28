@@ -120,7 +120,8 @@ export default function Account() {
 			const formattedData = data.data.map((item: any) => ({
 				id: item.id,
 				date: item.createdAt.split("T")[0],
-				address: item.location.city, // Colocar bairro tbm, é que nos exemplos que eu adicionei n tem ainda
+				// Colocar bairro tbm, é que nos exemplos que eu adicionei n tem ainda
+				address: item.location.postalCode + ", " + item.location.city,
 				description: item.description,
 				status: "SOLVED",
 				imageUrl: "https://i.imgur.com/oF6I8fT.jpeg",
