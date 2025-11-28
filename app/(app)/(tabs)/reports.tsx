@@ -2,8 +2,6 @@ import { FlashList } from "@shopify/flash-list";
 import { usePathname } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { Dimensions, RefreshControl, Share, StyleProp, Text, View } from "react-native";
-import { useEffect, useState } from "react";
-import { Dimensions, StyleProp, Text, View } from "react-native";
 import Animated, {
 	useAnimatedStyle,
 	useSharedValue,
@@ -59,8 +57,6 @@ type FeedItemData = {
 // 	},
 // ];
 
-=======
->>>>>>> origin/main
 const springConfig = {
 	damping: 12,
 	stiffness: 100,
@@ -123,11 +119,6 @@ export default function Reports() {
 	}, [isSelected, position]);
 
 	useEffect(() => {
-		// Auto refresh on mount
-		refreshTrashspots();
-	}, []);
-
-	useEffect(() => {
 		if (token) {
 			fetchTrashSpots();
 		}
@@ -145,9 +136,9 @@ export default function Reports() {
 
 	const onRefresh = useCallback(async () => {
 		setRefreshing(true);
-		await refreshTrashspots();
+		await fetchTrashSpots();
 		setRefreshing(false);
-	}, [refreshTrashspots]);
+	}, [fetchTrashSpots]);
 
 	return (
 		<View
@@ -164,7 +155,6 @@ export default function Reports() {
 			/> */}
 
 			<FlashList
-				data={trashspots || []}
 				data={feedData}
 				renderItem={({ item, index }) => (
 					<FeedItem

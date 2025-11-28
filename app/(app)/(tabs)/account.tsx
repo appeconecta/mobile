@@ -81,6 +81,7 @@ export default function Account() {
 	const [currentSection, setCurrentSection] = useState<"posts" | "analytics">("posts");
 	const [userData, setUserData] = useState<UserData | null>(null);
 	const [feedData, setFeedData] = useState<FeedItemData[] | null>([]);
+	const [refreshing, setRefreshing] = useState(false);
 	const sectionsScrollRef = useRef<ScrollView | null>(null);
 	const hasSyncedInitialSection = useRef(false);
 
@@ -136,6 +137,18 @@ export default function Account() {
 				text2: "Não foi possível receber os dados do feed. Tente novamente.",
 				position: "bottom",
 			});
+		}
+	};
+
+	const onRefresh = async () => {
+		setRefreshing(true);
+		try {
+			await fetchUserData();
+			await fetchFeedData();
+		} catch (error) {
+			console.error("Error refreshing data:", error);
+		} finally {
+			setRefreshing(false);
 		}
 	};
 
