@@ -2,6 +2,7 @@ import { Card } from "@/components/card";
 import { Image } from "@/components/ui/image";
 import { LinearGradient } from "@/components/ui/linear-gradient";
 import { useStatusBarStyle } from "@/hooks/use-status-bar-style";
+import { useSession } from "@/providers/session-provider";
 import { styled } from "nativewind";
 import { Dimensions, ScrollView, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -100,6 +101,8 @@ export default function Profile() {
 	const insets = useSafeAreaInsets();
 	useStatusBarStyle("light");
 
+	const { user } = useSession();
+
 	return (
 		<StyledScrollView
 			className="flex-1 bg-[#040A08]"
@@ -116,15 +119,17 @@ export default function Profile() {
 				>
 					<View className="flex flex-row items-center gap-4">
 						<Image
-							source="https://i.imgur.com/5Hsj4tJ.jpeg"
+							source={{ uri: user?.image }}
 							placeholder={{ blurhash }}
 							contentFit="cover"
 							transition={500}
 							className="h-20 w-20 rounded-2xl"
 						/>
 						<View className="flex-1">
-							<Text className="text-2xl font-bold text-white">{profile.name}</Text>
-							<Text className="text-primary-100 text-base">{profile.handle}</Text>
+							<Text className="text-2xl font-bold text-white">{user?.name}</Text>
+							<Text className="text-primary-100 text-base">
+								{user?.name.toLowerCase().replace(" ", "_")}
+							</Text>
 							<Text className="mt-1 text-sm text-white/70">{profile.base}</Text>
 						</View>
 					</View>

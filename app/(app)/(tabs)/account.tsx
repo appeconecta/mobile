@@ -75,7 +75,7 @@ export default function Account() {
 	const insets = useSafeAreaInsets();
 	useStatusBarStyle("dark");
 
-	const { signOut, session } = useSession();
+	const { signOut, token } = useSession();
 
 	const [currentSection, setCurrentSection] = useState<"posts" | "analytics">("posts");
 	const [userData, setUserData] = useState<UserData | null>(null);
@@ -91,7 +91,7 @@ export default function Account() {
 				method: "GET",
 				headers: {
 					"Content-Type": "application/json",
-					Authorization: `Bearer ${session}`,
+					Authorization: `Bearer ${token}`,
 				},
 			});
 			const data = await res.json();
@@ -113,7 +113,7 @@ export default function Account() {
 				method: "GET",
 				headers: {
 					"Content-Type": "application/json",
-					Authorization: `Bearer ${session}`,
+					Authorization: `Bearer ${token}`,
 				},
 			});
 			const data = await res.json();
@@ -155,11 +155,11 @@ export default function Account() {
 	}, [currentSection]);
 
 	useEffect(() => {
-		if (session) {
+		if (token) {
 			fetchUserData();
 			fetchFeedData();
 		}
-	}, [session]);
+	}, [token]);
 
 	const animatedStyle = useAnimatedStyle(() => {
 		return {
@@ -218,9 +218,7 @@ export default function Account() {
 				>
 					<View className="flex w-full flex-row items-center justify-between px-5">
 						<View className="w-5" />
-						<Text className="text-primary-600 text-xl font-bold">
-							{userData ? userData.user.name : "Carregando..."}
-						</Text>
+						<Text className="text-primary-600 text-xl font-bold">Fulano da Silva</Text>
 						<Pressable
 							android_ripple={{
 								radius: 24,
@@ -236,15 +234,12 @@ export default function Account() {
 
 					<View className="flex flex-col items-center justify-center gap-3">
 						<Image
-							source={userData?.user?.image || "https://i.imgur.com/5Hsj4tJ.jpeg"}
+							source={"https://i.imgur.com/5Hsj4tJ.jpeg"}
 							contentFit="cover"
 							transition={1000}
 							className="h-24 w-24 rounded-full"
 						/>
-						<Text className="text-primary-600 text-lg font-bold">
-							{/* Gambiarra temporária */}
-							{userData ? "@" + userData.user.email.split("@")?.[0] : "Carregando..."}
-						</Text>
+						<Text className="text-primary-600 text-lg font-bold">@theduardomaciel</Text>
 					</View>
 
 					<View className="flex w-full flex-row items-center justify-evenly">
@@ -369,7 +364,7 @@ export default function Account() {
 					end={{ x: 1, y: 0.5 }}
 				>
 					<Text className="text-3xl font-bold text-white">
-						{userData ? userData.user.name : "Carregando..."}
+						{user ? user.first_name + " " + user.last_name : "nomedousuário"}
 					</Text>
 					<Text className="text-base font-medium text-white">
 						{userData ? userData.user.email : "Carregando..."}
