@@ -1,5 +1,4 @@
-import { Link } from "expo-router";
-import React, { useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import {
 	Image,
 	NativeScrollEvent,
@@ -11,6 +10,9 @@ import {
 	View,
 } from "react-native";
 
+import { useSession } from "@/providers/session-provider";
+import { useRouter } from "expo-router";
+
 // Icons
 import GoogleIcon from "@/assets/icons/google.svg";
 import LogoFull from "@/assets/logo/logo-full.svg";
@@ -19,10 +21,13 @@ import LogoFull from "@/assets/logo/logo-full.svg";
 import { RippleButton } from "@/components/ui/ripple-button";
 
 // Data
-import steps from "./steps";
+import { steps } from "@/constants/onboarding";
 
-export default function OnBoarding() {
+export default function SignIn() {
+	const { signIn } = useSession();
 	const { width } = useWindowDimensions();
+
+	const router = useRouter();
 
 	const [activeIndex, setActiveIndex] = useState(0);
 	const scrollRef = useRef<ScrollView | null>(null);
@@ -36,6 +41,15 @@ export default function OnBoarding() {
 		if (!scrollRef.current) return;
 		scrollRef.current.scrollTo({ x: index * width, animated: true });
 	};
+
+	const login = useCallback(async () => {
+		try {
+			await signIn();
+			router.replace("/");
+		} catch (error) {
+			console.error("Error during sign-in:", error);
+		}
+	}, [signIn]);
 
 	return (
 		<View className="flex flex-1 items-stretch gap-8 py-16">
@@ -98,18 +112,16 @@ export default function OnBoarding() {
 			</View>
 
 			<View className="mx-12 mb-6 overflow-hidden rounded-3xl">
-				<Link href={"/(tabs)"} asChild>
-					<RippleButton
-						className="flex flex-row items-center justify-center gap-3 rounded-3xl border border-[#E6E6E6] bg-white py-3"
-						activeOpacity={0.6}
-						onPress={() => console.log("Google Sign-In")}
-					>
-						<GoogleIcon width={16} height={16} />
-						<Text className="text-[16px] font-semibold text-[#222]">
-							Continuar com Google
-						</Text>
-					</RippleButton>
-				</Link>
+				<RippleButton
+					className="flex flex-row items-center justify-center gap-3 rounded-3xl border border-[#E6E6E6] bg-white py-3"
+					activeOpacity={0.6}
+					onPress={login}
+				>
+					<GoogleIcon width={16} height={16} />
+					<Text className="text-[16px] font-semibold text-[#222]">
+						Continuar com Google
+					</Text>
+				</RippleButton>
 			</View>
 		</View>
 	);
