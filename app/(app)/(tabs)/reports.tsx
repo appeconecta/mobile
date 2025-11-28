@@ -1,7 +1,7 @@
 import { FlashList } from "@shopify/flash-list";
 import { usePathname } from "expo-router";
-import { useEffect } from "react";
-import { Dimensions, StyleProp, Text, View } from "react-native";
+import { useEffect, useState } from "react";
+import { Dimensions, Share, StyleProp, Text, View } from "react-native";
 import Animated, {
 	useAnimatedStyle,
 	useSharedValue,
@@ -12,6 +12,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 // Icons
 import FlagCheckIcon from "@/assets/icons/flag_check.svg";
+import FlagCheckFilledIcon from "@/assets/icons/flag_check_filled.svg";
 import PinIcon from "@/assets/icons/pin.svg";
 import ShareIcon from "@/assets/icons/share.svg";
 
@@ -23,7 +24,7 @@ import { useStatusBarStyle } from "@/hooks/use-status-bar-style";
 const INITIAL_POSITION = 165;
 const SELECTED_POSITION = 0;
 const MIN_FEED_ITEM_HEIGHT = 520;
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
+const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 type FeedItemData = {
 	id: string;
@@ -135,6 +136,14 @@ interface FeedItemProps extends FeedItemData {
 }
 
 function FeedItem({ author, address, imageUrl, height, style }: FeedItemProps) {
+	const [isReported, setIsReported] = useState(false);
+
+	const handleShare = () => {
+		Share.share({
+			message: `Confira esse relato de foco de lixo encontrado por ${author} em ${address}: ${imageUrl}`,
+		});
+	};
+
 	return (
 		<View className="relative w-full overflow-hidden" style={{ height }}>
 			<Image
@@ -145,8 +154,15 @@ function FeedItem({ author, address, imageUrl, height, style }: FeedItemProps) {
 			/>
 
 			<View className="absolute right-0 bottom-60 flex flex-col items-center justify-start gap-4 px-5">
-				<FeedButton icon={FlagCheckIcon} />
-				<FeedButton icon={ShareIcon} />
+				<FeedButton
+					icon={isReported ? FlagCheckFilledIcon : FlagCheckIcon}
+					onPress={() => setIsReported(!isReported)}
+				/>
+				<FeedButton
+					icon={ShareIcon}
+					onPress={handleShare}
+					springConfig={{ damping: 100, stiffness: 800 }}
+				/>
 			</View>
 
 			{/* <View className="absolute bottom-0 left-0 z-50 ">
