@@ -1,3 +1,4 @@
+import { User } from "@/types/user";
 import * as Linking from "expo-linking";
 import * as WebBrowser from "expo-web-browser";
 
@@ -25,17 +26,27 @@ export async function getToken() {
 	}
 }
 
-export async function getUserInfo(token: string) {
+interface HomeInfo {
+	user: User;
+	trashSpotsCount: number;
+	confirmationsCount: number;
+	commentsCount: number;
+}
+
+export async function getHomeInfo(token: string) {
 	const response = await fetch("https://econecta-api.vercel.app/api/users/me", {
 		method: "GET",
 		headers: {
 			Authorization: `Bearer ${token}`,
 		},
 	});
+
 	if (!response.ok) {
 		throw new Error("Failed to fetch user info");
 	}
-	const data = await response.json();
-	console.log("User Info Response:", data.data.user);
-	return data.data.user;
+
+	const data: { data: HomeInfo } = await response.json();
+	// console.log("User Info Response:", data.data.user);
+
+	return data.data;
 }
