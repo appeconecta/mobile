@@ -57,7 +57,7 @@ export default function Index() {
 					</Text>
 					<Text className="text-primary-600 text-4xl font-bold">Seu engajamento</Text>
 				</View>
-				<Link href="/(tabs)/account" asChild>
+				<Link href="/(app)/(tabs)/account" asChild>
 					<TouchableOpacity activeOpacity={0.8}>
 						<Image
 							source={"https://i.imgur.com/5Hsj4tJ.jpeg"}
@@ -105,6 +105,10 @@ export default function Index() {
 						style={{ flex: 1 }}
 						uiSettings={{
 							zoomControlsEnabled: false,
+							togglePitchEnabled: false,
+							scrollGesturesEnabled: false,
+							zoomGesturesEnabled: false,
+							tiltGesturesEnabled: false,
 						}}
 						cameraPosition={{
 							coordinates: {
