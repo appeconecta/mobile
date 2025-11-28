@@ -1,6 +1,6 @@
 import { FlashList } from "@shopify/flash-list";
 import { usePathname } from "expo-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Dimensions, StyleProp, Text, View } from "react-native";
 import Animated, {
 	useAnimatedStyle,
@@ -19,6 +19,8 @@ import ShareIcon from "@/assets/icons/share.svg";
 import { FeedButton } from "@/components/feed-button";
 import { Image } from "@/components/ui/image";
 import { useStatusBarStyle } from "@/hooks/use-status-bar-style";
+import { useSession } from "@/providers/session-provider";
+import Toast from "react-native-toast-message";
 
 const INITIAL_POSITION = 165;
 const SELECTED_POSITION = 0;
@@ -32,26 +34,26 @@ type FeedItemData = {
 	imageUrl: string;
 };
 
-const REPORTS_DATA: FeedItemData[] = [
-	{
-		id: "1",
-		author: "@fulaninho",
-		address: "1672 R. Al. da Paz, Maceió, Alagoas",
-		imageUrl: "https://i.imgur.com/5Hsj4tJ.jpeg",
-	},
-	{
-		id: "2",
-		author: "@ciclana",
-		address: "Av. da Paz, Maceió, Alagoas",
-		imageUrl: "https://i.imgur.com/d8G9K7p.jpeg",
-	},
-	{
-		id: "3",
-		author: "@joaodasilva",
-		address: "Praia da Pajuçara, Maceió",
-		imageUrl: "https://i.imgur.com/oF6I8fT.jpeg",
-	},
-];
+// const REPORTS_DATA: FeedItemData[] = [
+// 	{
+// 		id: "1",
+// 		author: "@fulaninho",
+// 		address: "1672 R. Al. da Paz, Maceió, Alagoas",
+// 		imageUrl: "https://i.imgur.com/5Hsj4tJ.jpeg",
+// 	},
+// 	{
+// 		id: "2",
+// 		author: "@ciclana",
+// 		address: "Av. da Paz, Maceió, Alagoas",
+// 		imageUrl: "https://i.imgur.com/d8G9K7p.jpeg",
+// 	},
+// 	{
+// 		id: "3",
+// 		author: "@joaodasilva",
+// 		address: "Praia da Pajuçara, Maceió",
+// 		imageUrl: "https://i.imgur.com/oF6I8fT.jpeg",
+// 	},
+// ];
 
 const springConfig = {
 	damping: 12,
@@ -61,6 +63,10 @@ const springConfig = {
 };
 
 export default function Reports() {
+	const { token } = useSession();
+
+	const [feedData, setFeedData] = useState<FeedItemData[]>([]);
+
 	const insets = useSafeAreaInsets();
 	useStatusBarStyle("light");
 
@@ -69,6 +75,34 @@ export default function Reports() {
 	const isSelected = usePathname() === "/reports";
 	const position = useSharedValue(isSelected ? SELECTED_POSITION : INITIAL_POSITION);
 	const opacity = useSharedValue(isSelected ? 1 : 0);
+
+	const fetchTrashSpots = async () => {
+		try {
+			const res = await fetch("https://econecta-api.vercel.app/api/trashspots/");
+			const data = await res.json();
+
+			const formattedData = data.data.map((item: any) => {
+				const postalCode = item.location.postalCode;
+				const city = item.location.city;
+
+				return {
+					id: item.id,
+					author: "@faltaintegrar",
+					address: `${postalCode || ''}${postalCode ? ", " : ""}${city}`,
+					imageUrl: "https://i.imgur.com/oF6I8fT.jpeg",
+				};
+			});
+			setFeedData(formattedData);
+		} catch (error) {
+			console.error("Error fetching trash spots:", error);
+			Toast.show({
+				type: "error",
+				text1: "Erro de pesquisa",
+				text2: "Não foi possível pesquisar os pontos de lixo. Tente novamente.",
+				position: "bottom",
+			});
+		}
+	};
 
 	useEffect(() => {
 		if (isSelected) {
@@ -79,6 +113,12 @@ export default function Reports() {
 			opacity.value = 0;
 		}
 	}, [isSelected, position]);
+
+	useEffect(() => {
+		if (token) {
+			fetchTrashSpots();
+		}
+	}, [token]);
 
 	const animatedStyle = useAnimatedStyle(() => {
 		return {
@@ -105,7 +145,7 @@ export default function Reports() {
 			/> */}
 
 			<FlashList
-				data={REPORTS_DATA}
+				data={feedData}
 				renderItem={({ item, index }) => (
 					<FeedItem
 						{...item}
