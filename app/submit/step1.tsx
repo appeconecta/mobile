@@ -7,10 +7,12 @@ import { Camera as ExpoCamera } from "expo-camera";
 
 // Components
 import { Camera } from "@/components/camera";
+import { useSubmitForm } from "./_layout";
 
 export default function SubmitFormStep1() {
 	const insets = useSafeAreaInsets();
 	const appState = useRef(AppState.currentState);
+	const { addPhoto } = useSubmitForm();
 
 	const [isFocused, setIsFocused] = useState(false);
 	const [permission, setPermission] = useState<{
@@ -64,6 +66,10 @@ export default function SubmitFormStep1() {
 		});
 	}
 
+	function handlePhotoTaken(uri: string) {
+		addPhoto(uri);
+	}
+
 	return (
 		<View
 			className="flex flex-1 items-start justify-start px-5"
@@ -72,7 +78,12 @@ export default function SubmitFormStep1() {
 				paddingBottom: insets.bottom + 10,
 			}}
 		>
-			{isFocused && <Camera permission={permission} />}
+			{isFocused && (
+				<Camera
+					permission={permission}
+					onCapture={(photoUri: string) => handlePhotoTaken(photoUri)}
+				/>
+			)}
 		</View>
 	);
 }

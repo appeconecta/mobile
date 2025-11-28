@@ -8,11 +8,17 @@ import { TagGroup } from "@/components/tag-group";
 
 // Data
 import { CATEGORIES } from "@/constants/category";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSubmitForm } from "./_layout";
 
 export default function SubmitFormStep3() {
 	const insets = useSafeAreaInsets();
-	const [selectedTags, setSelectedTags] = useState<string[]>([]);
+	const { tags, setTags } = useSubmitForm();
+	const [selectedTags, setSelectedTags] = useState<string[]>(tags);
+
+	useEffect(() => {
+		setSelectedTags(tags);
+	}, [tags]);
 
 	return (
 		<View
@@ -40,6 +46,7 @@ export default function SubmitFormStep3() {
 							onSelect={(selected) => {
 								console.log("Selected tags for category", category.id, selected);
 								setSelectedTags(selected);
+								setTags(selected);
 							}}
 							unique={false}
 						/>

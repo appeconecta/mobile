@@ -1,4 +1,5 @@
 import { Stack } from "expo-router";
+import { createContext, useContext, useMemo, useState } from "react";
 
 // Constants
 import { headerOptions } from "@/constants/header";
@@ -10,8 +11,33 @@ import { useStatusBarStyle } from "@/hooks/use-status-bar-style";
 export default function SubmitFormLayout() {
 	useStatusBarStyle("light");
 
+	// Shared submit form state across steps
+	const [photos, setPhotos] = useState<string[]>([]);
+	const [tags, setTags] = useState<string[]>([]);
+	const [description, setDescription] = useState<string>("");
+
+	function addPhoto(uri: string) {
+ 		setPhotos((prev) => (prev.includes(uri) ? prev : [...prev, uri]));
+ 	}
+
+	function removePhoto(uri: string) {
+ 		setPhotos((prev) => prev.filter((p) => p !== uri));
+ 	}
+
+	function resetForm() {
+ 		setPhotos([]);
+ 		setTags([]);
+ 		setDescription("");
+ 	}
+
+	const value = useMemo(
+ 		() => ({ photos, addPhoto, removePhoto, tags, setTags, description, setDescription, resetForm }),
+ 		[photos, tags, description]
+ 	);
+
 	return (
-		<Stack
+		<SubmitFormContext.Provider value={value}>
+			<Stack
 			screenOptions={{
 				contentStyle: {
 					backgroundColor: themes["light"]["--color-neutral-200"],
@@ -44,6 +70,26 @@ export default function SubmitFormLayout() {
 					headerTitle: "Quer ser ainda mais descritivo?",
 				}}
 			/>
-		</Stack>
+			</Stack>
+		</SubmitFormContext.Provider>
 	);
+}
+
+type SubmitFormContextType = {
+	photos: string[];
+	addPhoto: (uri: string) => void;
+	removePhoto: (uri: string) => void;
+	tags: string[];
+	setTags: (tags: string[]) => void;
+	description: string;
+	setDescription: (d: string) => void;
+	resetForm: () => void;
+};
+
+const SubmitFormContext = createContext<SubmitFormContextType | null>(null);
+
+export function useSubmitForm() {
+	const ctx = useContext(SubmitFormContext);
+	if (!ctx) throw new Error("useSubmitForm must be used within SubmitFormLayout");
+	return ctx;
 }
