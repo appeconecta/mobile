@@ -25,10 +25,18 @@ const StyledVerifiedIcon = styled(VerifiedIcon);
 import SearchIcon from "@/assets/icons/search.svg";
 const StyledSearchIcon = styled(SearchIcon);
 
+import ShareIcon from "@/assets/icons/share.svg";
+const StyledShareIcon = styled(ShareIcon);
+
+import TrashIcon from "@/assets/icons/trash.svg";
+const StyledTrashIcon = styled(TrashIcon);
+
 import FilterIcon from "@/assets/icons/filter.svg";
 import { BottomSheet } from "@/components/bottom-sheet";
+import { Image } from "@/components/ui/image";
 import { markerConfigs, markerIcons } from "@/constants/marker";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { ScrollView } from "react-native-gesture-handler";
 
 // Data
 const StyledFilterIcon = styled(FilterIcon);
@@ -200,15 +208,67 @@ export default function Community() {
 						setSelectedMarker(null);
 					}
 				}}
+				handleIndicatorStyle={{ backgroundColor: "#E5E5E5", width: 60, marginTop: 8 }}
 				enableDismissOnClose
 			>
-				<View className="p-6">
-					<Text className="text-primary-600 text-xl font-semibold">
-						Detalhes do Ponto
-					</Text>
-					<Text className="text-primary-600 font-regular mt-2 text-base">
-						Informações detalhadas sobre o ponto selecionado no mapa aparecerão aqui.
-					</Text>
+				<View className="gap-4 pt-1 pb-6">
+					{/* Header */}
+					<View className="flex flex-col px-6">
+						<Text className="text-primary-600 mb-1 text-xl font-semibold">
+							1672 R. Al. da Paz, Maceió, Alagoas
+						</Text>
+						<View className="flex flex-row items-center justify-start gap-2">
+							<Text className="text-primary-500 font-regular text-base">
+								Relatório
+							</Text>
+							<View className="bg-primary-500 h-1 w-1 rounded-full" />
+							<Image
+								className="h-4 w-4 rounded-full"
+								source="https://avatars.githubusercontent.com/u/9919?s=200&v=4"
+							/>
+							<Text className="text-primary-500 font-regular text-base">
+								postado por <Text className="font-bold">@theduardomaciel</Text>
+							</Text>
+						</View>
+					</View>
+					{/* Buttons */}
+					<ScrollView
+						horizontal
+						showsHorizontalScrollIndicator={false}
+						contentContainerClassName="gap-2 px-6"
+					>
+						<TouchableOpacity
+							activeOpacity={0.8}
+							className="bg bg-primary-200 flex flex-row items-center justify-center gap-2 rounded-full px-4 py-2"
+						>
+							<StyledTrashIcon width={16} height={16} className="fill-white" />
+							<Text className="text-base font-bold text-white">Confirmar foco</Text>
+						</TouchableOpacity>
+						<TouchableOpacity
+							activeOpacity={0.8}
+							className="border-primary-200 flex flex-row items-center justify-center gap-2 rounded-full border px-4 py-2"
+						>
+							<StyledShareIcon width={16} height={16} className="fill-primary-200" />
+							<Text className="text-primary-200 text-base font-bold">
+								Compartilhar
+							</Text>
+						</TouchableOpacity>
+					</ScrollView>
+					{/* Images */}
+					<View className="px-6">
+						<Image
+							source={"https://i.imgur.com/d8G9K7p.jpeg"}
+							className="h-36 w-full self-center rounded-md"
+						/>
+					</View>
+					{/* Description */}
+					<View className="px-6">
+						<Text className="text-primary-600 font-regular mt-2 text-base">
+							Informações detalhadas sobre o ponto selecionado no mapa aparecerão
+							aqui.
+						</Text>
+					</View>
+					{/* Tags */}
 				</View>
 			</BottomSheet>
 		</View>
