@@ -1,9 +1,17 @@
 import { useImage } from "expo-image";
 import { GoogleMaps } from "expo-maps";
 import { styled } from "nativewind";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Pressable, Text, TextInput, TouchableOpacity, View } from "react-native";
-import { FadeIn, FadeOut } from "react-native-reanimated";
+import Animated, {
+	cancelAnimation,
+	FadeIn,
+	FadeOut,
+	useAnimatedStyle,
+	useSharedValue,
+	withRepeat,
+	withSpring,
+} from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 // Components
@@ -36,8 +44,10 @@ import FilterIcon from "@/assets/icons/filter.svg";
 import { BottomSheet } from "@/components/bottom-sheet";
 import { Image } from "@/components/ui/image";
 import { markerConfigs, markerIcons } from "@/constants/marker";
+import { useCache } from "@/providers/cache-provider";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { ScrollView } from "react-native-gesture-handler";
+import Toast from "react-native-toast-message";
 
 // Data
 const StyledFilterIcon = styled(FilterIcon);
@@ -51,6 +61,50 @@ const filterTags = [
 export default function Community() {
 	const insets = useSafeAreaInsets();
 	useStatusBarStyle("dark");
+	const { trashspots, collectionspots, refreshTrashspots, refreshCollectionspots } = useCache();
+
+	const [isRefreshing, setIsRefreshing] = useState(false);
+	const rotation = useSharedValue(0);
+
+	const animatedStyle = useAnimatedStyle(() => {
+		return {
+			transform: [{ rotate: `${rotation.value}deg` }],
+		};
+	});
+
+	const handleRefresh = async () => {
+		if (isRefreshing) return;
+		console.log("Refreshing data...");
+		setIsRefreshing(true);
+		rotation.value = withRepeat(
+			withSpring(rotation.value + 360, { duration: 1000 }),
+			-1,
+			false
+		);
+
+		// Refresh both trashspots and collectionspots
+		try {
+			await Promise.all([refreshTrashspots(), refreshCollectionspots()]);
+		} catch (error) {
+			console.error("Error refreshing data:", error);
+			Toast.show({
+				type: "error",
+				text1: "Erro ao atualizar",
+				text2: "Não foi possível atualizar os dados. Tente novamente.",
+				position: "bottom",
+			});
+		} finally {
+			console.log("Data refreshed successfully");
+			setIsRefreshing(false);
+			cancelAnimation(rotation);
+			rotation.value = 0; // Reset rotation after refresh
+		}
+	};
+
+	useEffect(() => {
+		// Auto refresh on mount
+		handleRefresh();
+	}, []);
 
 	const markerIconRefs = {
 		marker1: useImage(markerIcons.marker1),
@@ -152,8 +206,14 @@ export default function Community() {
 			<View className="z-50 mb-4 flex flex-col items-start justify-start gap-1 px-5">
 				<View className="flex w-full flex-row items-center justify-between">
 					<Text className="text-primary-600 text-5xl font-medium">Sua Cidade</Text>
-					<TouchableOpacity className="bg-bg-100 rounded-full p-2">
-						<StyledRefreshIcon width={24} height={24} />
+					<TouchableOpacity
+						className="bg-bg-100 rounded-full p-2"
+						onPress={handleRefresh}
+						disabled={isRefreshing}
+					>
+						<Animated.View style={animatedStyle}>
+							<StyledRefreshIcon width={24} height={24} />
+						</Animated.View>
 					</TouchableOpacity>
 				</View>
 				<View className="flex flex-row items-center justify-center gap-2">

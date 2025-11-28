@@ -82,3 +82,19 @@ export async function getSpots(token: string) {
 	const data = await response.json();
 	return data.data || data;
 }
+
+export async function getCollectionspots(token: string) {
+	const response = await fetch("https://econecta-api.vercel.app/api/collectionspots", {
+		method: "GET",
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+	});
+
+	if (!response.ok) {
+		throw new Error("Failed to fetch collectionspots");
+	}
+
+	const data = await response.json();
+	return data.data || data;
+}
