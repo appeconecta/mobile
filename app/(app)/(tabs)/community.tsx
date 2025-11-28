@@ -1,7 +1,7 @@
 import { useImage } from "expo-image";
 import { GoogleMaps } from "expo-maps";
 import { styled } from "nativewind";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -24,10 +24,18 @@ import SearchIcon from "@/assets/icons/search.svg";
 const StyledSearchIcon = styled(SearchIcon);
 
 import FilterIcon from "@/assets/icons/filter.svg";
+import { BottomSheet } from "@/components/bottom-sheet";
 import { markerConfigs, markerIcons } from "@/constants/marker";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 
 // Data
 const StyledFilterIcon = styled(FilterIcon);
+
+const filterTags = [
+	{ id: "lixo", name: "Focos de Lixo" },
+	{ id: "coleta", name: "Pontos de Coleta" },
+	{ id: "lixeiras", name: "Lixeiras" },
+];
 
 export default function Community() {
 	const insets = useSafeAreaInsets();
@@ -47,13 +55,22 @@ export default function Community() {
 		[]
 	);
 
-	const filterTags = [
-		{ id: "lixo", name: "Focos de Lixo" },
-		{ id: "coleta", name: "Pontos de Coleta" },
-		{ id: "lixeiras", name: "Lixeiras" },
-	];
-
 	const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
+	const [selectedMarker, setSelectedMarker] = useState<string | null>(null);
+
+	const bottomSheetRef = useRef<BottomSheetModal>(null);
+
+	const handleModalOpen = useCallback(() => {
+		const sheet = bottomSheetRef.current;
+		if (!sheet) return;
+		sheet.present();
+	}, []);
+
+	const handleModalClose = useCallback(() => {
+		const sheet = bottomSheetRef.current;
+		if (!sheet) return;
+		sheet.dismiss();
+	}, []);
 
 	return (
 		<View
@@ -85,6 +102,12 @@ export default function Community() {
 				}}
 				colorScheme={GoogleMapsColorScheme.LIGHT}
 				markers={renderedMarkers}
+				onMarkerClick={(marker) => {
+					if (!marker.id) return;
+					console.log("Marker clicked:", marker.id);
+					setSelectedMarker(marker.id);
+					handleModalOpen();
+				}}
 			/>
 			{/* Header */}
 			{/* Title */}
@@ -135,6 +158,16 @@ export default function Community() {
 				colors={["#C9E2C9", "rgba(243, 247, 244, 0)"]}
 				className="absolute top-0 left-0 h-64 w-full opacity-80"
 			/>
+			<BottomSheet ref={bottomSheetRef} snapPoints={["40%"]} index={1}>
+				<View className="p-6">
+					<Text className="text-primary-600 text-xl font-semibold">
+						Detalhes do Ponto
+					</Text>
+					<Text className="text-primary-600 font-regular mt-2 text-base">
+						Informações detalhadas sobre o ponto selecionado no mapa aparecerão aqui.
+					</Text>
+				</View>
+			</BottomSheet>
 		</View>
 	);
 }
