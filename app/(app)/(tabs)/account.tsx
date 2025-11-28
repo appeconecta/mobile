@@ -7,6 +7,7 @@ import {
 	NativeScrollEvent,
 	NativeSyntheticEvent,
 	Pressable,
+	RefreshControl,
 	ScrollView,
 	Text,
 	TouchableOpacity,
@@ -208,6 +209,7 @@ export default function Account() {
 				minHeight: SCREEN_HEIGHT + insets.top,
 				paddingBottom: insets.bottom + 128,
 			}}
+			refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
 		>
 			<View className="flex flex-1 items-center justify-start">
 				{/* Header */}
@@ -219,7 +221,9 @@ export default function Account() {
 				>
 					<View className="flex w-full flex-row items-center justify-between px-5">
 						<View className="w-5" />
-						<Text className="text-primary-600 text-xl font-bold">{userData ? userData.user.name : "Carregando..."}</Text>
+						<Text className="text-primary-600 text-xl font-bold">
+							{userData ? userData.user.name : "Carregando..."}
+						</Text>
 						<Pressable
 							android_ripple={{
 								radius: 24,
@@ -240,7 +244,9 @@ export default function Account() {
 							transition={1000}
 							className="h-24 w-24 rounded-full"
 						/>
-						<Text className="text-primary-600 text-lg font-bold">{userData ? ("@" + userData.user.email.split("@")?.[0]) : "Carregando..."}</Text>
+						<Text className="text-primary-600 text-lg font-bold">
+							{userData ? "@" + userData.user.email.split("@")?.[0] : "Carregando..."}
+						</Text>
 					</View>
 
 					<View className="flex w-full flex-row items-center justify-evenly">
@@ -460,7 +466,7 @@ function FeedItem({ status, date, address, description, imageUrl, style }: FeedI
 		>
 			<View className="flex flex-1 flex-col items-start justify-start gap-2 p-3">
 				<Text className="text-primary-600 mb-2 font-medium">{address}</Text>
-				<Text className="text-primary-400 font-normal line-clamp-3">{description}</Text>
+				<Text className="text-primary-400 line-clamp-3 font-normal">{description}</Text>
 
 				<View className="mt-auto flex w-full flex-row items-center justify-between">
 					<View className="flex flex-row items-center justify-start gap-1">

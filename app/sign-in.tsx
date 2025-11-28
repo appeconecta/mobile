@@ -23,7 +23,7 @@ import { RippleButton } from "@/components/ui/ripple-button";
 // Data
 import { steps } from "@/constants/onboarding";
 import { useStatusBarStyle } from "@/hooks/use-status-bar-style";
-import { getToken, getUserInfo } from "@/lib/auth";
+import { getHomeInfo, getToken } from "@/lib/api";
 import Toast from "react-native-toast-message";
 
 export default function SignIn() {
@@ -50,10 +50,10 @@ export default function SignIn() {
 	const login = useCallback(async () => {
 		try {
 			const token = await getToken();
-			const user = await getUserInfo(token);
+			const data = await getHomeInfo(token);
 
 			// Perform sign-in
-			await signIn(token, user);
+			await signIn(token, data.user);
 
 			router.replace("/");
 		} catch (error) {

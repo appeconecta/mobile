@@ -2,15 +2,23 @@ import { Text, TouchableOpacity, View } from "react-native";
 import Animated, { LinearTransition, ZoomIn, ZoomOut } from "react-native-reanimated";
 
 import CloseSmallIcon from "@/assets/icons/close_small.svg";
+import { cn } from "@/lib/utils";
 
 interface TagProps {
 	name: string;
 	selected?: boolean;
 	onPress?: () => void;
+	isDisabled?: boolean;
 	multiSelect?: boolean; // When true, show plus icon when not selected
 }
 
-export function Tag({ name, selected = false, onPress, multiSelect = false }: TagProps) {
+export function Tag({
+	name,
+	selected = false,
+	onPress,
+	isDisabled,
+	multiSelect = false,
+}: TagProps) {
 	const bgClass = selected ? "bg-primary-600" : "bg-primary-300";
 
 	// Animations are GPU-accelerated and avoid layout thrashing.
@@ -18,11 +26,20 @@ export function Tag({ name, selected = false, onPress, multiSelect = false }: Ta
 
 	const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
 
+	const Component = onPress ? AnimatedTouchableOpacity : View;
+
 	return (
-		<AnimatedTouchableOpacity
+		<Component
 			layout={LinearTransition.duration(70).springify().stiffness(900)}
-			activeOpacity={0.8}
-			className={`${bgClass} flex-row items-center justify-center rounded-full px-4 py-2 transition-colors`}
+			activeOpacity={0.9}
+			className={cn(
+				"flex-row items-center justify-center rounded-full px-4 py-2 transition-colors",
+				bgClass,
+				{
+					"bg-gray-400 opacity-60": isDisabled,
+				}
+			)}
+			disabled={isDisabled}
 			onPress={onPress}
 		>
 			<Text className={`text-base font-bold text-white`}>{name}</Text>
@@ -72,6 +89,6 @@ export function Tag({ name, selected = false, onPress, multiSelect = false }: Ta
 					<CloseSmallIcon width={18} height={18} fill={"white"} />
 				</Animated.View>
 			)}
-		</AnimatedTouchableOpacity>
+		</Component>
 	);
 }

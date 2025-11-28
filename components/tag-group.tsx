@@ -6,6 +6,7 @@ import { Tag } from "./tag";
 interface TagItem {
 	id: string;
 	name: string;
+	disabled?: boolean;
 }
 
 interface TagGroupProps {
@@ -46,6 +47,7 @@ export function TagGroup({ className, tags, selected, onSelect, unique = false }
 					selected={selected.includes(tag.id)}
 					onPress={() => handlePress(tag.id)}
 					multiSelect={!unique}
+					isDisabled={tag.disabled}
 				/>
 			))}
 		</ScrollView>
