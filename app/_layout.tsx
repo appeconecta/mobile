@@ -7,6 +7,7 @@ import Toast, { BaseToast, ToastConfig } from "react-native-toast-message";
 
 import { SplashScreenController } from "@/components/splash";
 import { themes } from "@/constants/theme";
+import { CacheProvider } from "@/providers/cache-provider";
 import { SessionProvider, useSession } from "@/providers/session-provider";
 
 import "../global.css";
@@ -69,7 +70,9 @@ function Providers({ children }: { children: React.ReactNode }) {
 		<GestureHandlerRootView style={{ flex: 1 }}>
 			<VariableContextProvider value={themes.light}>
 				<BottomSheetModalProvider>
-					<SessionProvider>{children}</SessionProvider>
+					<SessionProvider>
+						<CacheProvider>{children}</CacheProvider>
+					</SessionProvider>
 				</BottomSheetModalProvider>
 			</VariableContextProvider>
 		</GestureHandlerRootView>

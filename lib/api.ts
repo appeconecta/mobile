@@ -50,3 +50,35 @@ export async function getHomeInfo(token: string) {
 
 	return data.data;
 }
+
+export async function getTrashspots(token: string) {
+	const response = await fetch("https://econecta-api.vercel.app/api/trashspots", {
+		method: "GET",
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+	});
+
+	if (!response.ok) {
+		throw new Error("Failed to fetch trashspots");
+	}
+
+	const data = await response.json();
+	return data.data || data;
+}
+
+export async function getSpots(token: string) {
+	const response = await fetch("https://econecta-api.vercel.app/api/spots/me", {
+		method: "GET",
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+	});
+
+	if (!response.ok) {
+		throw new Error("Failed to fetch spots");
+	}
+
+	const data = await response.json();
+	return data.data || data;
+}

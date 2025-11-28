@@ -45,7 +45,7 @@ const StyledFilterIcon = styled(FilterIcon);
 const filterTags = [
 	{ id: "lixo", name: "Focos de Lixo" },
 	{ id: "coleta", name: "Pontos de Coleta" },
-	{ id: "lixeiras", name: "Lixeiras" },
+	{ id: "lixeiras", name: "Lixeiras", disabled: true },
 ];
 
 export default function Community() {
