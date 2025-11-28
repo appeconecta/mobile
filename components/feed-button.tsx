@@ -4,12 +4,21 @@ import { SvgProps } from "react-native-svg";
 
 interface FeedButtonProps extends PressableProps {
 	icon: React.ComponentType<SvgProps>;
+	springConfig?: {
+		damping: number;
+		stiffness: number;
+	};
+	// damping controls how quickly oscillations settle, stiffness controls how fast the scale responds
 }
 
-export function FeedButton({ icon: Icon, onPressIn, onPressOut, ...rest }: FeedButtonProps) {
+export function FeedButton({
+	icon: Icon,
+	onPressIn,
+	onPressOut,
+	springConfig = { damping: 30, stiffness: 500 },
+	...rest
+}: FeedButtonProps) {
 	const scale = useSharedValue(1);
-	const springConfig = { damping: 30, stiffness: 500 };
-	// damping controls how quickly oscillations settle, stiffness controls how fast the scale responds
 
 	const handlePressIn = (event: GestureResponderEvent) => {
 		scale.value = withSpring(0.8, springConfig);

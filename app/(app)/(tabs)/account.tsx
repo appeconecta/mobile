@@ -7,6 +7,7 @@ import {
 	NativeScrollEvent,
 	NativeSyntheticEvent,
 	Pressable,
+	RefreshControl,
 	ScrollView,
 	Text,
 	TouchableOpacity,
@@ -41,6 +42,7 @@ import ForYouIcon from "@/assets/icons/for_you.svg";
 import InfoIcon from "@/assets/icons/info.svg";
 import LogoutIcon from "@/assets/icons/logout.svg";
 import SettingsIcon from "@/assets/icons/settings.svg";
+import { useCache } from "@/providers/cache-provider";
 import { useSession } from "@/providers/session-provider";
 import { Link } from "expo-router";
 
@@ -107,7 +109,9 @@ export default function Account() {
 	const insets = useSafeAreaInsets();
 	useStatusBarStyle("dark");
 
-	const { signOut } = useSession();
+	const { signOut, user } = useSession();
+	const { spots, refreshSpots } = useCache();
+	const [refreshing, setRefreshing] = useState(false);
 
 	const [currentSection, setCurrentSection] = useState<"posts" | "analytics">("posts");
 	const sectionsScrollRef = useRef<ScrollView | null>(null);
@@ -131,6 +135,17 @@ export default function Account() {
 		});
 		hasSyncedInitialSection.current = true;
 	}, [currentSection]);
+
+	useEffect(() => {
+		// Auto refresh on mount
+		refreshSpots();
+	}, []);
+
+	const onRefresh = async () => {
+		setRefreshing(true);
+		await refreshSpots();
+		setRefreshing(false);
+	};
 
 	const animatedStyle = useAnimatedStyle(() => {
 		return {
@@ -178,6 +193,7 @@ export default function Account() {
 				minHeight: SCREEN_HEIGHT + insets.top,
 				paddingBottom: insets.bottom + 128,
 			}}
+			refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
 		>
 			<View className="flex flex-1 items-center justify-start">
 				{/* Header */}
@@ -189,7 +205,7 @@ export default function Account() {
 				>
 					<View className="flex w-full flex-row items-center justify-between px-5">
 						<View className="w-5" />
-						<Text className="text-primary-600 text-xl font-bold">Fulano da Silva</Text>
+						<Text className="text-primary-600 text-xl font-bold">{user?.name}</Text>
 						<Pressable
 							android_ripple={{
 								radius: 24,
@@ -205,12 +221,14 @@ export default function Account() {
 
 					<View className="flex flex-col items-center justify-center gap-3">
 						<Image
-							source={"https://i.imgur.com/5Hsj4tJ.jpeg"}
+							source={{ uri: user?.image }}
 							contentFit="cover"
 							transition={1000}
 							className="h-24 w-24 rounded-full"
 						/>
-						<Text className="text-primary-600 text-lg font-bold">@theduardomaciel</Text>
+						<Text className="text-primary-600 text-lg font-bold">
+							@{user?.name.toLowerCase().replace(" ", "_")}
+						</Text>
 					</View>
 
 					<View className="flex w-full flex-row items-center justify-evenly">
@@ -288,7 +306,7 @@ export default function Account() {
 				>
 					<View style={{ width: SCREEN_WIDTH }}>
 						<FlashList
-							data={ITEMS}
+							data={spots || []}
 							renderItem={({ item, index }) => <FeedItem {...item} />}
 							keyExtractor={(item) => item.id}
 							scrollEnabled={false}
@@ -328,9 +346,7 @@ export default function Account() {
 					start={{ x: 0, y: 0.5 }}
 					end={{ x: 1, y: 0.5 }}
 				>
-					<Text className="text-3xl font-bold text-white">
-						{user ? user.first_name + " " + user.last_name : "nomedousuário"}
-					</Text>
+					<Text className="text-3xl font-bold text-white">{user?.name}</Text>
 					<Text className="text-base font-medium text-white">
 						{user ? user.email : "email@email.com"}
 					</Text>

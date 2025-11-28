@@ -1,7 +1,7 @@
 import { FlashList } from "@shopify/flash-list";
 import { usePathname } from "expo-router";
-import { useEffect } from "react";
-import { Dimensions, StyleProp, Text, View } from "react-native";
+import { useCallback, useEffect, useState } from "react";
+import { Dimensions, RefreshControl, Share, StyleProp, Text, View } from "react-native";
 import Animated, {
 	useAnimatedStyle,
 	useSharedValue,
@@ -12,6 +12,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 // Icons
 import FlagCheckIcon from "@/assets/icons/flag_check.svg";
+import FlagCheckFilledIcon from "@/assets/icons/flag_check_filled.svg";
 import PinIcon from "@/assets/icons/pin.svg";
 import ShareIcon from "@/assets/icons/share.svg";
 
@@ -19,11 +20,12 @@ import ShareIcon from "@/assets/icons/share.svg";
 import { FeedButton } from "@/components/feed-button";
 import { Image } from "@/components/ui/image";
 import { useStatusBarStyle } from "@/hooks/use-status-bar-style";
+import { useCache } from "@/providers/cache-provider";
 
 const INITIAL_POSITION = 165;
 const SELECTED_POSITION = 0;
 const MIN_FEED_ITEM_HEIGHT = 520;
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
+const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 type FeedItemData = {
 	id: string;
@@ -31,27 +33,6 @@ type FeedItemData = {
 	address: string;
 	imageUrl: string;
 };
-
-const REPORTS_DATA: FeedItemData[] = [
-	{
-		id: "1",
-		author: "@fulaninho",
-		address: "1672 R. Al. da Paz, Maceió, Alagoas",
-		imageUrl: "https://i.imgur.com/5Hsj4tJ.jpeg",
-	},
-	{
-		id: "2",
-		author: "@ciclana",
-		address: "Av. da Paz, Maceió, Alagoas",
-		imageUrl: "https://i.imgur.com/d8G9K7p.jpeg",
-	},
-	{
-		id: "3",
-		author: "@joaodasilva",
-		address: "Praia da Pajuçara, Maceió",
-		imageUrl: "https://i.imgur.com/oF6I8fT.jpeg",
-	},
-];
 
 const springConfig = {
 	damping: 12,
@@ -63,6 +44,8 @@ const springConfig = {
 export default function Reports() {
 	const insets = useSafeAreaInsets();
 	useStatusBarStyle("light");
+	const { trashspots, refreshTrashspots } = useCache();
+	const [refreshing, setRefreshing] = useState(false);
 
 	const pageHeight = Math.max(MIN_FEED_ITEM_HEIGHT, SCREEN_HEIGHT - (insets.top + insets.bottom));
 
@@ -80,6 +63,11 @@ export default function Reports() {
 		}
 	}, [isSelected, position]);
 
+	useEffect(() => {
+		// Auto refresh on mount
+		refreshTrashspots();
+	}, []);
+
 	const animatedStyle = useAnimatedStyle(() => {
 		return {
 			transform: [
@@ -89,6 +77,12 @@ export default function Reports() {
 			],
 		};
 	});
+
+	const onRefresh = useCallback(async () => {
+		setRefreshing(true);
+		await refreshTrashspots();
+		setRefreshing(false);
+	}, [refreshTrashspots]);
 
 	return (
 		<View
@@ -105,7 +99,7 @@ export default function Reports() {
 			/> */}
 
 			<FlashList
-				data={REPORTS_DATA}
+				data={trashspots || []}
 				renderItem={({ item, index }) => (
 					<FeedItem
 						{...item}
@@ -124,17 +118,25 @@ export default function Reports() {
 				contentContainerStyle={{
 					paddingBottom: insets.bottom + 32,
 				}}
+				refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
 			/>
 		</View>
 	);
 }
-
 interface FeedItemProps extends FeedItemData {
 	height: number;
 	style?: StyleProp<any>;
 }
 
 function FeedItem({ author, address, imageUrl, height, style }: FeedItemProps) {
+	const [isReported, setIsReported] = useState(false);
+
+	const handleShare = () => {
+		Share.share({
+			message: `Confira esse relato de foco de lixo encontrado por ${author} em ${address}: ${imageUrl}`,
+		});
+	};
+
 	return (
 		<View className="relative w-full overflow-hidden" style={{ height }}>
 			<Image
@@ -145,8 +147,15 @@ function FeedItem({ author, address, imageUrl, height, style }: FeedItemProps) {
 			/>
 
 			<View className="absolute right-0 bottom-60 flex flex-col items-center justify-start gap-4 px-5">
-				<FeedButton icon={FlagCheckIcon} />
-				<FeedButton icon={ShareIcon} />
+				<FeedButton
+					icon={isReported ? FlagCheckFilledIcon : FlagCheckIcon}
+					onPress={() => setIsReported(!isReported)}
+				/>
+				<FeedButton
+					icon={ShareIcon}
+					onPress={handleShare}
+					springConfig={{ damping: 100, stiffness: 800 }}
+				/>
 			</View>
 
 			{/* <View className="absolute bottom-0 left-0 z-50 ">

@@ -1,8 +1,8 @@
 import { Camera } from "expo-camera";
 import { GoogleMaps } from "expo-maps";
 import { styled } from "nativewind";
-import { useCallback } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { useCallback, useEffect, useState } from "react";
+import { RefreshControl, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Link, useRouter } from "expo-router";
@@ -17,6 +17,8 @@ import AddIcon from "@/assets/icons/add.svg";
 import RecycleIcon from "@/assets/icons/recycle.svg";
 
 // Types
+import { useCache } from "@/providers/cache-provider";
+import { useSession } from "@/providers/session-provider";
 import { GoogleMapsColorScheme } from "expo-maps/build/google/GoogleMaps.types";
 
 const StyledRecycleIcon = styled(RecycleIcon);
@@ -27,12 +29,20 @@ const blurhash =
 export default function Index() {
 	const insets = useSafeAreaInsets();
 	const router = useRouter();
+	const { user } = useSession();
+	const { homeData, refreshHome } = useCache();
+	const [refreshing, setRefreshing] = useState(false);
 
 	useStatusBarStyle("dark");
 
+	useEffect(() => {
+		// Auto refresh on mount
+		refreshHome();
+	}, []);
+
 	const goToSubmit = useCallback(async () => {
 		const permission = await Camera.getCameraPermissionsAsync();
-		console.log("Permission:", permission);
+		// console.log("Permission:", permission);
 		if (permission?.granted === false && permission?.canAskAgain === true) {
 			router.push("/(permissions)/camera");
 		} else {
@@ -40,11 +50,18 @@ export default function Index() {
 		}
 	}, []);
 
+	const onRefresh = useCallback(async () => {
+		setRefreshing(true);
+		await refreshHome();
+		setRefreshing(false);
+	}, [refreshHome]);
+
 	return (
 		<ScrollView
 			nestedScrollEnabled
 			showsVerticalScrollIndicator={false}
 			contentContainerClassName="flex items-start justify-start gap-4 pt-2"
+			refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
 		>
 			{/* Header */}
 			<View
@@ -53,14 +70,14 @@ export default function Index() {
 			>
 				<View className="flex flex-col items-start justify-start gap-1">
 					<Text className="text-primary-300 text-lg font-semibold">
-						Bem vindo, Fulano
+						Bem vindo, {user?.name.split(" ")[0]}
 					</Text>
 					<Text className="text-primary-600 text-4xl font-bold">Seu engajamento</Text>
 				</View>
-				<Link href="/(tabs)/account" asChild>
+				<Link href="/(app)/(tabs)/account" asChild>
 					<TouchableOpacity activeOpacity={0.8}>
 						<Image
-							source={"https://i.imgur.com/5Hsj4tJ.jpeg"}
+							source={{ uri: user?.image }}
 							placeholder={{ blurhash }}
 							contentFit="cover"
 							transition={1000}
@@ -83,11 +100,15 @@ export default function Index() {
 			<View className="flex flex-row items-center justify-start gap-4 px-5">
 				<Card className="flex-1 gap-3">
 					<Text className="font-medium text-white">Focos reportados este mês</Text>
-					<Text className="text-4xl font-bold text-white">12 focos</Text>
+					<Text className="text-4xl font-bold text-white">
+						{homeData?.trashSpotsCount ?? 0} focos
+					</Text>
 				</Card>
 				<Card className="flex-1 gap-3">
 					<Text className="font-medium text-white">Focos reportados resolvidos</Text>
-					<Text className="text-4xl font-bold text-white">3 focos</Text>
+					<Text className="text-4xl font-bold text-white">
+						{homeData?.confirmationsCount ?? 0} focos
+					</Text>
 				</Card>
 			</View>
 
@@ -105,6 +126,10 @@ export default function Index() {
 						style={{ flex: 1 }}
 						uiSettings={{
 							zoomControlsEnabled: false,
+							togglePitchEnabled: false,
+							scrollGesturesEnabled: false,
+							zoomGesturesEnabled: false,
+							tiltGesturesEnabled: false,
 						}}
 						cameraPosition={{
 							coordinates: {
