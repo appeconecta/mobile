@@ -3,6 +3,7 @@ import { GoogleMaps } from "expo-maps";
 import { styled } from "nativewind";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { Pressable, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { FadeIn, FadeOut } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 // Components
@@ -176,6 +177,8 @@ export default function Community() {
 					title={selectedMarker.title || ""}
 					distance="0.5 km"
 					confirmationsCount={10}
+					entering={FadeIn}
+					exiting={FadeOut.duration(100)}
 				/>
 			)}
 			<BottomSheet

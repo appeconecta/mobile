@@ -1,5 +1,6 @@
 import { styled } from "nativewind";
 import { Dimensions, Text, View } from "react-native";
+import Animated from "react-native-reanimated";
 
 import PhoneIcon from "@/assets/icons/phone.svg";
 import TrashIcon from "@/assets/icons/trash.svg";
@@ -16,6 +17,8 @@ interface CalloutProps {
 	distance: string;
 	phoneNumber?: string;
 	confirmationsCount?: number;
+	entering?: any;
+	exiting?: any;
 }
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
@@ -26,13 +29,19 @@ export function Callout({
 	distance,
 	phoneNumber,
 	confirmationsCount,
+	entering,
+	exiting,
 }: CalloutProps) {
 	if (!phoneNumber && !confirmationsCount) {
 		return null;
 	}
 
 	return (
-		<View className="absolute bottom-120 left-1/2 h-22 -translate-x-1/2">
+		<Animated.View
+			className="absolute bottom-120 left-1/2 h-22 -translate-x-1/2"
+			entering={entering}
+			exiting={exiting}
+		>
 			<StyledTriangle className="fill-primary-300 absolute -bottom-2 left-1/2 h-6 w-8 -translate-x-1/2 shadow-md" />
 			<View
 				className={cn(
@@ -57,6 +66,6 @@ export function Callout({
 					<Text className="text-primary-200 text-sm font-medium">{distance}</Text>
 				</View>
 			</View>
-		</View>
+		</Animated.View>
 	);
 }
