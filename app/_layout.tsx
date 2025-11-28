@@ -20,28 +20,9 @@ export default function RootLayout() {
 	// const colorScheme = useColorScheme() as "light" | "dark";
 	// console.log("Color scheme:", colorScheme);
 
-	const session = useSession();
-	console.log("Session:", session);
-
 	return (
 		<Providers>
-			<SplashScreenController />
-			<Stack
-				screenOptions={{
-					headerShown: false,
-					contentStyle: {
-						backgroundColor: themes["light"]["--color-neutral-200"],
-					},
-				}}
-			>
-				<Stack.Protected guard={!!session}>
-					<Stack.Screen name="(app)" />
-				</Stack.Protected>
-
-				<Stack.Protected guard={!session}>
-					<Stack.Screen name="sign-in" />
-				</Stack.Protected>
-			</Stack>
+			<LayoutWithAuth />
 		</Providers>
 	);
 }
@@ -55,5 +36,40 @@ function Providers({ children }: { children: React.ReactNode }) {
 				</BottomSheetModalProvider>
 			</VariableContextProvider>
 		</GestureHandlerRootView>
+	);
+}
+
+function LayoutWithAuth() {
+	const { session } = useSession();
+	console.log("Session:", { session });
+
+	if (!session) {
+		return (
+			<>
+				<SplashScreenController />
+				{/* Redirect to sign-in when not authenticated */}
+				{/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+				{/* @ts-ignore - Redirect is provided by expo-router */}
+				<Stack>
+					<Stack.Screen name="sign-in" options={{ headerShown: false }} />
+				</Stack>
+			</>
+		);
+	}
+
+	return (
+		<>
+			<SplashScreenController />
+			<Stack
+				screenOptions={{
+					headerShown: false,
+					contentStyle: {
+						backgroundColor: themes["light"]["--color-neutral-200"],
+					},
+				}}
+			>
+				<Stack.Screen name="(app)" />
+			</Stack>
+		</>
 	);
 }
