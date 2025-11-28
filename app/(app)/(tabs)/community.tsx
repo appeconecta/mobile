@@ -8,6 +8,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 // Components
 import { Callout } from "@/components/callout";
+import { Tag } from "@/components/tag";
 import { TagGroup } from "@/components/tag-group";
 import { useStatusBarStyle } from "@/hooks/use-status-bar-style";
 
@@ -70,6 +71,21 @@ export default function Community() {
 
 	const mapRef = useRef<GoogleMaps.MapView>(null);
 	const bottomSheetRef = useRef<BottomSheetModal>(null);
+
+	const selectedTags = [
+		{ id: "2-3", name: "Vidro" },
+		{ id: "2-4", name: "Papel e papelão" },
+		{ id: "2-5", name: "Orgânico" },
+		{ id: "2-6", name: "Eletrônico" },
+		{ id: "3-2", name: "Médio (1m² a 5m²)" },
+		{ id: "4-2", name: "Raramente limpo" },
+		{ id: "4-3", name: "Às vezes limpo" },
+		{ id: "5-3", name: "Vegetação moderada" },
+		{ id: "8-3", name: "Animais selvagens" },
+		{ id: "8-4", name: "Insetos" },
+		{ id: "8-5", name: "Aves" },
+		{ id: "9-1", name: "Fácil acesso" },
+	];
 
 	const handleModalOpen = useCallback(() => {
 		const sheet = bottomSheetRef.current;
@@ -192,7 +208,7 @@ export default function Community() {
 			<BottomSheet
 				ref={bottomSheetRef}
 				snapPoints={["40%"]}
-				index={1}
+				index={0}
 				backdropComponent={() => (
 					<Pressable
 						className="absolute top-0 right-0 bottom-0 left-0 flex-1 bg-black/0"
@@ -263,12 +279,22 @@ export default function Community() {
 					</View>
 					{/* Description */}
 					<View className="px-6">
-						<Text className="text-primary-600 font-regular mt-2 text-base">
+						<Text className="text-primary-600 font-regular text-base">
 							Informações detalhadas sobre o ponto selecionado no mapa aparecerão
 							aqui.
 						</Text>
 					</View>
 					{/* Tags */}
+					<Text className="text-primary-600 px-6 text-lg font-semibold">
+						Tags associadas
+					</Text>
+					<View className="px-6">
+						<View className="flex-row flex-wrap gap-2">
+							{selectedTags.map((tag) => (
+								<Tag key={tag.id} name={tag.name} />
+							))}
+						</View>
+					</View>
 				</View>
 			</BottomSheet>
 		</View>

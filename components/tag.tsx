@@ -18,8 +18,10 @@ export function Tag({ name, selected = false, onPress, multiSelect = false }: Ta
 
 	const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
 
+	const Component = onPress ? AnimatedTouchableOpacity : View;
+
 	return (
-		<AnimatedTouchableOpacity
+		<Component
 			layout={LinearTransition.duration(70).springify().stiffness(900)}
 			activeOpacity={0.8}
 			className={`${bgClass} flex-row items-center justify-center rounded-full px-4 py-2 transition-colors`}
@@ -72,6 +74,6 @@ export function Tag({ name, selected = false, onPress, multiSelect = false }: Ta
 					<CloseSmallIcon width={18} height={18} fill={"white"} />
 				</Animated.View>
 			)}
-		</AnimatedTouchableOpacity>
+		</Component>
 	);
 }
