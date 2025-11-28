@@ -42,7 +42,7 @@ export default function RootLayout() {
 }
 
 function RootNavigator() {
-	const { session } = useSession();
+	const { token } = useSession();
 
 	return (
 		<Stack
@@ -53,11 +53,11 @@ function RootNavigator() {
 				},
 			}}
 		>
-			<Stack.Protected guard={!!session}>
+			<Stack.Protected guard={!!token}>
 				<Stack.Screen name="(app)" />
 			</Stack.Protected>
 
-			<Stack.Protected guard={!session}>
+			<Stack.Protected guard={!token}>
 				<Stack.Screen name="sign-in" />
 			</Stack.Protected>
 		</Stack>

@@ -15,30 +15,27 @@ export async function getToken() {
 
 		console.log("Query Params:", queryParams);
 
-		if (queryParams?.code && typeof queryParams.code === "string") {
-			// Exchange the code for a token
-			const response = await fetch("https://econecta-api.vercel.app/api/mobile/auth", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({ code: queryParams.code }),
-			});
-
-			console.log("Token Exchange Response:", response);
-
-			if (!response.ok) {
-				throw new Error("Failed to exchange code for token");
-			}
-
-			const data = await response.json();
-			if (data.token) {
-				return data.token;
-			} else {
-				throw new Error("Token not found in response");
-			}
+		if (queryParams?.token && typeof queryParams.token === "string") {
+			return queryParams.token;
 		} else {
 			throw new Error("Authentication failed");
 		}
+	} else {
+		throw new Error("Authentication canceled");
 	}
+}
+
+export async function getUserInfo(token: string) {
+	const response = await fetch("https://econecta-api.vercel.app/api/users/me", {
+		method: "GET",
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+	});
+	if (!response.ok) {
+		throw new Error("Failed to fetch user info");
+	}
+	const data = await response.json();
+	console.log("User Info Response:", data.data.user);
+	return data.data.user;
 }

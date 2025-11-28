@@ -107,7 +107,7 @@ export default function Account() {
 	const insets = useSafeAreaInsets();
 	useStatusBarStyle("dark");
 
-	const { signOut } = useSession();
+	const { signOut, user } = useSession();
 
 	const [currentSection, setCurrentSection] = useState<"posts" | "analytics">("posts");
 	const sectionsScrollRef = useRef<ScrollView | null>(null);
@@ -189,7 +189,7 @@ export default function Account() {
 				>
 					<View className="flex w-full flex-row items-center justify-between px-5">
 						<View className="w-5" />
-						<Text className="text-primary-600 text-xl font-bold">Fulano da Silva</Text>
+						<Text className="text-primary-600 text-xl font-bold">{user?.name}</Text>
 						<Pressable
 							android_ripple={{
 								radius: 24,
@@ -205,12 +205,14 @@ export default function Account() {
 
 					<View className="flex flex-col items-center justify-center gap-3">
 						<Image
-							source={"https://i.imgur.com/5Hsj4tJ.jpeg"}
+							source={{ uri: user?.image }}
 							contentFit="cover"
 							transition={1000}
 							className="h-24 w-24 rounded-full"
 						/>
-						<Text className="text-primary-600 text-lg font-bold">@theduardomaciel</Text>
+						<Text className="text-primary-600 text-lg font-bold">
+							@{user?.name.toLowerCase().replace(" ", "_")}
+						</Text>
 					</View>
 
 					<View className="flex w-full flex-row items-center justify-evenly">
@@ -328,9 +330,7 @@ export default function Account() {
 					start={{ x: 0, y: 0.5 }}
 					end={{ x: 1, y: 0.5 }}
 				>
-					<Text className="text-3xl font-bold text-white">
-						{user ? user.first_name + " " + user.last_name : "nomedousuário"}
-					</Text>
+					<Text className="text-3xl font-bold text-white">{user?.name}</Text>
 					<Text className="text-base font-medium text-white">
 						{user ? user.email : "email@email.com"}
 					</Text>

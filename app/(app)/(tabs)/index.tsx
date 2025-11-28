@@ -17,6 +17,7 @@ import AddIcon from "@/assets/icons/add.svg";
 import RecycleIcon from "@/assets/icons/recycle.svg";
 
 // Types
+import { useSession } from "@/providers/session-provider";
 import { GoogleMapsColorScheme } from "expo-maps/build/google/GoogleMaps.types";
 
 const StyledRecycleIcon = styled(RecycleIcon);
@@ -27,12 +28,13 @@ const blurhash =
 export default function Index() {
 	const insets = useSafeAreaInsets();
 	const router = useRouter();
+	const { user } = useSession();
 
 	useStatusBarStyle("dark");
 
 	const goToSubmit = useCallback(async () => {
 		const permission = await Camera.getCameraPermissionsAsync();
-		console.log("Permission:", permission);
+		// console.log("Permission:", permission);
 		if (permission?.granted === false && permission?.canAskAgain === true) {
 			router.push("/(permissions)/camera");
 		} else {
@@ -53,14 +55,14 @@ export default function Index() {
 			>
 				<View className="flex flex-col items-start justify-start gap-1">
 					<Text className="text-primary-300 text-lg font-semibold">
-						Bem vindo, Fulano
+						Bem vindo, {user?.name.split(" ")[0]}
 					</Text>
 					<Text className="text-primary-600 text-4xl font-bold">Seu engajamento</Text>
 				</View>
 				<Link href="/(app)/(tabs)/account" asChild>
 					<TouchableOpacity activeOpacity={0.8}>
 						<Image
-							source={"https://i.imgur.com/5Hsj4tJ.jpeg"}
+							source={{ uri: user?.image }}
 							placeholder={{ blurhash }}
 							contentFit="cover"
 							transition={1000}
