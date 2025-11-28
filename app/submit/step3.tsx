@@ -22,8 +22,8 @@ export default function SubmitFormStep3() {
 			}}
 		>
 			<ScrollView
-				className="mt-4 flex w-full flex-1 flex-col gap-4"
-				contentContainerClassName="pb-4 gap-4"
+				className="flex w-full flex-1 flex-col gap-4"
+				contentContainerClassName="py-4 gap-4"
 			>
 				{/* <Text className="mt-4 pl-5 text-[24px] font-bold text-[#103218]">
 					Quais tipos de lixo estão presentes no foco de poluição?
