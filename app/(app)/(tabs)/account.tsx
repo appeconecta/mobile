@@ -124,7 +124,7 @@ export default function Account() {
 				address: item.location.postalCode + ", " + item.location.city,
 				description: item.description,
 				status: "SOLVED",
-				imageUrl: "https://i.imgur.com/oF6I8fT.jpeg",
+				imageUrl: item?.lastImage?.url ?? "https://i.imgur.com/oF6I8fT.jpeg",
 			}));
 			setFeedData(formattedData);
 		} catch (e) {
