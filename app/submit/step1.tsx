@@ -66,8 +66,8 @@ export default function SubmitFormStep1() {
 		});
 	}
 
-	function handlePhotoTaken(uri: string) {
-		addPhoto(uri);
+	function handlePhotoTaken(uri: string, base64?: string) {
+		addPhoto(uri, base64);
 	}
 
 	return (
@@ -81,7 +81,9 @@ export default function SubmitFormStep1() {
 			{isFocused && (
 				<Camera
 					permission={permission}
-					onCapture={(photoUri: string) => handlePhotoTaken(photoUri)}
+					onCapture={(photoUri: string, base64?: string) =>
+						handlePhotoTaken(photoUri, base64)
+					}
 				/>
 			)}
 		</View>

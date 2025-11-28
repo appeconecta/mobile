@@ -1,5 +1,5 @@
-import { clsx, type ClassValue } from 'clsx';
-import { twMerge } from 'tailwind-merge';
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -7,12 +7,13 @@ export function cn(...inputs: ClassValue[]) {
 
 type SubmitPayload = {
 	photos: string[];
+	photosBase64?: string[];
 	tags: string[];
 	description: string;
 };
 
 export async function submitReport(payload: SubmitPayload) {
-	// Replace with your real API endpoint
+	// Replace with the real API endpoint
 	const endpoint = process.env.EXPO_PUBLIC_API_URL ?? "https://example.com/api/reports";
 
 	const res = await fetch(endpoint, {

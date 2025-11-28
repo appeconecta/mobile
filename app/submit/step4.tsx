@@ -1,15 +1,21 @@
 import { Alert, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useSubmitForm } from "./_layout";
-import { submitReport } from "@/lib/utils";
 
 export default function SubmitFormStep4() {
 	const insets = useSafeAreaInsets();
- 	const { photos, tags, description, setDescription, resetForm } = useSubmitForm();
+	const { photos, photosBase64, tags, description, setDescription, resetForm } = useSubmitForm();
 
 	async function handleSubmit() {
 		try {
-			await submitReport({ photos, tags, description });
+			console.log("Submitting report with data:", {
+				photos,
+				photosBase64,
+				tags,
+				description,
+			});
+			await Promise.all([]);
+			// await submitReport({ photos, photosBase64, tags, description });
 			resetForm();
 			Alert.alert("Sucesso", "Relatório enviado com sucesso.");
 		} catch (e) {
@@ -41,7 +47,10 @@ export default function SubmitFormStep4() {
 					identificação e resolução do problema.
 				</Text>
 			</View>
-			<TouchableOpacity className="bg-primary-400 mt-auto w-full items-center justify-center rounded-lg px-9 py-3" onPress={handleSubmit}>
+			<TouchableOpacity
+				className="bg-primary-400 mt-auto w-full items-center justify-center rounded-lg px-9 py-3"
+				onPress={handleSubmit}
+			>
 				<Text className="text-center text-lg font-medium text-white">Enviar Relatório</Text>
 			</TouchableOpacity>
 		</View>

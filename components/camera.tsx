@@ -1,7 +1,7 @@
 import { CameraType, CameraView } from "expo-camera";
-import { Link, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { styled } from "nativewind";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Linking, Text, TouchableOpacity, View } from "react-native";
 
 import { cn } from "@/lib/utils";
@@ -19,10 +19,14 @@ interface CameraProps {
 		granted: boolean;
 		canAskAgain: boolean;
 	} | null;
+	onCapture?: (uri: string, base64?: string) => void;
 }
 
-export function Camera({ permission, className }: CameraProps) {
+export function Camera({ permission, className, onCapture }: CameraProps) {
 	const [facing, setFacing] = useState<CameraType>("back");
+	const [isReady, setIsReady] = useState(false);
+	const [isCapturing, setIsCapturing] = useState(false);
+	const cameraRef = useRef<CameraView | null>(null);
 	const router = useRouter();
 
 	if (permission === null) {
@@ -83,6 +87,29 @@ export function Camera({ permission, className }: CameraProps) {
 		setFacing((current) => (current === "back" ? "front" : "back"));
 	}
 
+	async function takePicture() {
+		try {
+			if (!isReady || !cameraRef.current || isCapturing) return;
+			setIsCapturing(true);
+			const picture = await cameraRef.current.takePictureAsync({
+				quality: 0.8,
+				skipProcessing: false,
+				base64: true,
+			});
+			if (picture?.uri) {
+				const base64 = picture.base64
+					? `data:image/jpg;base64,${picture.base64}`
+					: undefined;
+				onCapture?.(picture.uri, base64);
+				router.push("/submit/step2");
+			}
+		} catch (e) {
+			console.error("Failed to take picture", e);
+		} finally {
+			setIsCapturing(false);
+		}
+	}
+
 	return (
 		<>
 			<View
@@ -91,7 +118,14 @@ export function Camera({ permission, className }: CameraProps) {
 					className
 				)}
 			>
-				<CameraView style={{ flex: 1, width: "100%" }} facing={facing} />
+				<CameraView
+					ref={(ref) => {
+						cameraRef.current = ref;
+					}}
+					style={{ flex: 1, width: "100%" }}
+					facing={facing}
+					onCameraReady={() => setIsReady(true)}
+				/>
 				<TouchableOpacity
 					className="bg-primary-400 absolute right-6 bottom-6 flex-row self-center rounded-full px-4 py-4"
 					onPress={toggleCameraFacing}
@@ -99,11 +133,14 @@ export function Camera({ permission, className }: CameraProps) {
 					<StyledFlipCameraIcon width={24} height={24} className="fill-white" />
 				</TouchableOpacity>
 			</View>
-			<Link href="/submit/step2" asChild>
-				<TouchableOpacity className="bg-primary-400 w-full items-center justify-center rounded-br-lg rounded-bl-lg px-9 py-4">
-					<StyledCameraIcon className="fill-white" width={28} height={28} />
-				</TouchableOpacity>
-			</Link>
+			<TouchableOpacity
+				className="bg-primary-400 w-full items-center justify-center rounded-br-lg rounded-bl-lg px-9 py-4"
+				onPress={takePicture}
+				disabled={!isReady || isCapturing}
+				activeOpacity={0.85}
+			>
+				<StyledCameraIcon className="fill-white" width={28} height={28} />
+			</TouchableOpacity>
 		</>
 	);
 }

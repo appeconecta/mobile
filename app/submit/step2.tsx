@@ -9,7 +9,7 @@ import { useSubmitForm } from "./_layout";
 
 export default function SubmitFormStep2() {
 	const insets = useSafeAreaInsets();
- 	const { photos, removePhoto } = useSubmitForm();
+	const { photos, removePhoto } = useSubmitForm();
 
 	return (
 		<View
@@ -36,7 +36,7 @@ export default function SubmitFormStep2() {
 									resizeMode="cover"
 								/>
 								<TouchableOpacity
-									className="absolute -right-2 -top-2 rounded-full bg-[#D1351B] p-2"
+									className="absolute -top-2 -right-2 rounded-full bg-[#D1351B] p-2"
 									activeOpacity={0.8}
 									onPress={() => removePhoto(uri)}
 								>
