@@ -43,6 +43,7 @@ import LogoutIcon from "@/assets/icons/logout.svg";
 import SettingsIcon from "@/assets/icons/settings.svg";
 import { useSession } from "@/providers/session-provider";
 import { Link } from "expo-router";
+import Toast from "react-native-toast-message";
 
 const StyledDehazeIcon = styled(DehazeIcon);
 const StyledAnalyticsIcon = styled(AnalyticsIcon);
@@ -70,50 +71,71 @@ const ITEM_HEIGHT = 128;
 const POSTS_POSITION = SCREEN_WIDTH / 4 - BAR_WIDTH / 2;
 const ANALYTICS_POSITION = (3 * SCREEN_WIDTH) / 4 - BAR_WIDTH / 2;
 
-const ITEMS: FeedItemData[] = [
-	{
-		id: "1",
-		imageUrl: "https://i.imgur.com/5Hsj4tJ.jpeg",
-		status: "PENDING",
-		date: "2024-06-01",
-		address: "1672 R. Al. da Paz, Maceió, Alagoas",
-		description: "Lorem ipsum dolor sit amet.",
-	},
-	{
-		id: "2",
-		imageUrl: "https://i.imgur.com/d8G9K7p.jpeg",
-		status: "SOLVED",
-		date: "2024-06-02",
-		address: "Av. da Paz, Maceió, Alagoas",
-		description: "Consectetur adipiscing elit.",
-	},
-	{
-		id: "3",
-		imageUrl: "https://i.imgur.com/oF6I8fT.jpeg",
-		status: "PENDING",
-		date: "2024-06-24",
-		address: "Praia da Pajuçara, Maceió",
-		description: "Sed do eiusmod tempor incididunt.",
-	},
-];
-
-const user = {
-	first_name: "Eduardo",
-	last_name: "Maciel",
-	email: "teste@gmail.com",
-};
-
 export default function Account() {
 	const insets = useSafeAreaInsets();
 	useStatusBarStyle("dark");
 
-	const { signOut } = useSession();
+	const { signOut, session } = useSession();
 
 	const [currentSection, setCurrentSection] = useState<"posts" | "analytics">("posts");
+	const [userData, setUserData] = useState<UserData | null>(null);
+	const [feedData, setFeedData] = useState<FeedItemData[] | null>([]);
 	const sectionsScrollRef = useRef<ScrollView | null>(null);
 	const hasSyncedInitialSection = useRef(false);
 
 	const position = useSharedValue(POSTS_POSITION);
+
+	const fetchUserData = async () => {
+		try {
+			const res = await fetch("https://econecta-api.vercel.app/api/users/me", {
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${session}`,
+				},
+			});
+			const data = await res.json();
+			setUserData(data.data);
+		} catch (e) {
+			console.error("Error fetching user data:", e);
+			Toast.show({
+				type: "error",
+				text1: "Erro de pesquisa",
+				text2: "Não foi possível receber os dados do usuário. Tente novamente.",
+				position: "bottom",
+			});
+		}
+	};
+
+	const fetchFeedData = async () => {
+		try {
+			const res = await fetch("https://econecta-api.vercel.app/api/trashspots", {
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${session}`,
+				},
+			});
+			const data = await res.json();
+			const formattedData = data.data.map((item: any) => ({
+				id: item.id,
+				date: item.createdAt.split("T")[0],
+				address: item.location.city, // Colocar bairro tbm, é que nos exemplos que eu adicionei n tem ainda
+				description: item.description,
+				status: "SOLVED",
+				imageUrl: "https://i.imgur.com/oF6I8fT.jpeg",
+			}));
+			setFeedData(formattedData);
+		} catch (e) {
+			console.error("Error fetching user data:", e);
+			Toast.show({
+				type: "error",
+				text1: "Erro de pesquisa",
+				text2: "Não foi possível receber os dados do feed. Tente novamente.",
+				position: "bottom",
+			});
+		}
+	};
 
 	useEffect(() => {
 		if (currentSection === "posts") {
@@ -131,6 +153,13 @@ export default function Account() {
 		});
 		hasSyncedInitialSection.current = true;
 	}, [currentSection]);
+
+	useEffect(() => {
+		if (session) {
+			fetchUserData();
+			fetchFeedData();
+		}
+	}, [session]);
 
 	const animatedStyle = useAnimatedStyle(() => {
 		return {
@@ -189,7 +218,9 @@ export default function Account() {
 				>
 					<View className="flex w-full flex-row items-center justify-between px-5">
 						<View className="w-5" />
-						<Text className="text-primary-600 text-xl font-bold">Fulano da Silva</Text>
+						<Text className="text-primary-600 text-xl font-bold">
+							{userData ? userData.user.name : "Carregando..."}
+						</Text>
 						<Pressable
 							android_ripple={{
 								radius: 24,
@@ -205,27 +236,36 @@ export default function Account() {
 
 					<View className="flex flex-col items-center justify-center gap-3">
 						<Image
-							source={"https://i.imgur.com/5Hsj4tJ.jpeg"}
+							source={userData?.user?.image || "https://i.imgur.com/5Hsj4tJ.jpeg"}
 							contentFit="cover"
 							transition={1000}
 							className="h-24 w-24 rounded-full"
 						/>
-						<Text className="text-primary-600 text-lg font-bold">@theduardomaciel</Text>
+						<Text className="text-primary-600 text-lg font-bold">
+							{/* Gambiarra temporária */}
+							{userData ? "@" + userData.user.email.split("@")?.[0] : "Carregando..."}
+						</Text>
 					</View>
 
 					<View className="flex w-full flex-row items-center justify-evenly">
 						<View className="flex flex-col items-center justify-center gap-1">
-							<Text className="text-primary-600 text-2xl font-black">115</Text>
+							<Text className="text-primary-600 text-2xl font-black">
+								{userData ? userData.trashSpotsCount : "..."}
+							</Text>
 							<Text className="text-primary-300 text-sm font-medium">Relatórios</Text>
 						</View>
 						<View className="flex flex-col items-center justify-center gap-1">
-							<Text className="text-primary-600 text-2xl font-black">45</Text>
+							<Text className="text-primary-600 text-2xl font-black">
+								{userData ? userData.confirmationsCount : "..."}
+							</Text>
 							<Text className="text-primary-300 text-sm font-medium">
 								Confirmações
 							</Text>
 						</View>
 						<View className="flex flex-col items-center justify-center gap-1">
-							<Text className="text-primary-600 text-2xl font-black">24</Text>
+							<Text className="text-primary-600 text-2xl font-black">
+								{userData ? userData.commentsCount : "..."}
+							</Text>
 							<Text className="text-primary-300 text-sm font-medium">
 								Comentários
 							</Text>
@@ -288,7 +328,7 @@ export default function Account() {
 				>
 					<View style={{ width: SCREEN_WIDTH }}>
 						<FlashList
-							data={ITEMS}
+							data={feedData}
 							renderItem={({ item, index }) => <FeedItem {...item} />}
 							keyExtractor={(item) => item.id}
 							scrollEnabled={false}
@@ -329,10 +369,10 @@ export default function Account() {
 					end={{ x: 1, y: 0.5 }}
 				>
 					<Text className="text-3xl font-bold text-white">
-						{user ? user.first_name + " " + user.last_name : "nomedousuário"}
+						{userData ? userData.user.name : "Carregando..."}
 					</Text>
 					<Text className="text-base font-medium text-white">
-						{user ? user.email : "email@email.com"}
+						{userData ? userData.user.email : "Carregando..."}
 					</Text>
 				</LinearGradient>
 				<View className="w-[80%] flex-1 items-center">
@@ -382,6 +422,17 @@ export default function Account() {
 	);
 }
 
+interface UserData {
+	user: {
+		id: string;
+		name: string;
+		email: string;
+		image?: string;
+	};
+	commentsCount: number;
+	confirmationsCount: number;
+	trashSpotsCount: number;
+}
 interface FeedItemData {
 	id: string;
 	imageUrl: string;
@@ -413,7 +464,7 @@ function FeedItem({ status, date, address, description, imageUrl, style }: FeedI
 		>
 			<View className="flex flex-1 flex-col items-start justify-start gap-2 p-3">
 				<Text className="text-primary-600 mb-2 font-medium">{address}</Text>
-				<Text className="text-primary-400 font-normal">{description}</Text>
+				<Text className="text-primary-400 font-normal line-clamp-3">{description}</Text>
 
 				<View className="mt-auto flex w-full flex-row items-center justify-between">
 					<View className="flex flex-row items-center justify-start gap-1">
