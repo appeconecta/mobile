@@ -218,7 +218,7 @@ export default function Account() {
 				>
 					<View className="flex w-full flex-row items-center justify-between px-5">
 						<View className="w-5" />
-						<Text className="text-primary-600 text-xl font-bold">Fulano da Silva</Text>
+						<Text className="text-primary-600 text-xl font-bold">{userData ? userData.user.name : "Carregando..."}</Text>
 						<Pressable
 							android_ripple={{
 								radius: 24,
@@ -234,12 +234,12 @@ export default function Account() {
 
 					<View className="flex flex-col items-center justify-center gap-3">
 						<Image
-							source={"https://i.imgur.com/5Hsj4tJ.jpeg"}
+							source={userData?.user?.image || "https://i.imgur.com/5Hsj4tJ.jpeg"}
 							contentFit="cover"
 							transition={1000}
 							className="h-24 w-24 rounded-full"
 						/>
-						<Text className="text-primary-600 text-lg font-bold">@theduardomaciel</Text>
+						<Text className="text-primary-600 text-lg font-bold">{userData ? ("@" + userData.user.email.split("@")?.[0]) : "Carregando..."}</Text>
 					</View>
 
 					<View className="flex w-full flex-row items-center justify-evenly">
@@ -364,7 +364,7 @@ export default function Account() {
 					end={{ x: 1, y: 0.5 }}
 				>
 					<Text className="text-3xl font-bold text-white">
-						{user ? user.first_name + " " + user.last_name : "nomedousuário"}
+						{userData ? userData.user.name : "Carregando..."}
 					</Text>
 					<Text className="text-base font-medium text-white">
 						{userData ? userData.user.email : "Carregando..."}
