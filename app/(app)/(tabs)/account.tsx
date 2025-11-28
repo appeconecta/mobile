@@ -41,6 +41,7 @@ import ForYouIcon from "@/assets/icons/for_you.svg";
 import InfoIcon from "@/assets/icons/info.svg";
 import LogoutIcon from "@/assets/icons/logout.svg";
 import SettingsIcon from "@/assets/icons/settings.svg";
+import { useSession } from "@/providers/session-provider";
 import { Link } from "expo-router";
 
 const StyledDehazeIcon = styled(DehazeIcon);
@@ -105,6 +106,8 @@ const user = {
 export default function Account() {
 	const insets = useSafeAreaInsets();
 	useStatusBarStyle("dark");
+
+	const { signOut } = useSession();
 
 	const [currentSection, setCurrentSection] = useState<"posts" | "analytics">("posts");
 	const sectionsScrollRef = useRef<ScrollView | null>(null);
@@ -370,6 +373,7 @@ export default function Account() {
 						icon={StyledLogoutIcon}
 						title="Log-out"
 						description="nos vemos em breve!"
+						onPress={() => signOut()}
 						isLast
 					/>
 				</View>
