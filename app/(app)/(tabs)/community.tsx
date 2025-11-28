@@ -2,7 +2,7 @@ import { useImage } from "expo-image";
 import { GoogleMaps } from "expo-maps";
 import { styled } from "nativewind";
 import { useCallback, useMemo, useRef, useState } from "react";
-import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Pressable, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 // Components
@@ -10,7 +10,7 @@ import { TagGroup } from "@/components/tag-group";
 import { useStatusBarStyle } from "@/hooks/use-status-bar-style";
 
 // Types
-import { GoogleMapsColorScheme } from "expo-maps/build/google/GoogleMaps.types";
+import { GoogleMapsColorScheme, GoogleMapsMarker } from "expo-maps/build/google/GoogleMaps.types";
 
 // Icons
 import RefreshIcon from "@/assets/icons/refresh.svg";
@@ -56,8 +56,9 @@ export default function Community() {
 	);
 
 	const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
-	const [selectedMarker, setSelectedMarker] = useState<string | null>(null);
+	const [selectedMarker, setSelectedMarker] = useState<GoogleMapsMarker | null>(null);
 
+	const mapRef = useRef<GoogleMaps.MapView>(null);
 	const bottomSheetRef = useRef<BottomSheetModal>(null);
 
 	const handleModalOpen = useCallback(() => {
@@ -89,6 +90,7 @@ export default function Community() {
 					right: 0,
 					bottom: 0,
 				}}
+				ref={mapRef}
 				contentPadding={{
 					top: insets.top + 256,
 					bottom: insets.bottom + 128,
@@ -103,9 +105,19 @@ export default function Community() {
 				colorScheme={GoogleMapsColorScheme.LIGHT}
 				markers={renderedMarkers}
 				onMarkerClick={(marker) => {
-					if (!marker.id) return;
+					if (!marker) return;
 					console.log("Marker clicked:", marker.id);
-					setSelectedMarker(marker.id);
+
+					setSelectedMarker(marker);
+
+					mapRef.current?.setCameraPosition({
+						coordinates: {
+							latitude: (marker.coordinates?.latitude ?? 0) - 0.0025,
+							longitude: marker.coordinates?.longitude ?? 0,
+						},
+						zoom: 15,
+					});
+
 					handleModalOpen();
 				}}
 			/>
@@ -158,7 +170,27 @@ export default function Community() {
 				colors={["#C9E2C9", "rgba(243, 247, 244, 0)"]}
 				className="absolute top-0 left-0 h-64 w-full opacity-80"
 			/>
-			<BottomSheet ref={bottomSheetRef} snapPoints={["40%"]} index={1}>
+			<BottomSheet
+				ref={bottomSheetRef}
+				snapPoints={["40%"]}
+				index={1}
+				backdropComponent={() => (
+					<Pressable
+						className="absolute top-0 right-0 bottom-0 left-0 flex-1 bg-black/0"
+						onPress={handleModalClose}
+					/>
+				)}
+				onDismiss={() => {
+					if (selectedMarker) {
+						mapRef.current?.setCameraPosition({
+							coordinates: selectedMarker?.coordinates,
+							zoom: 14,
+						});
+						setSelectedMarker(null);
+					}
+				}}
+				enableDismissOnClose
+			>
 				<View className="p-6">
 					<Text className="text-primary-600 text-xl font-semibold">
 						Detalhes do Ponto
