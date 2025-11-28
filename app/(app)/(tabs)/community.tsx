@@ -6,6 +6,7 @@ import { Pressable, Text, TextInput, TouchableOpacity, View } from "react-native
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 // Components
+import { Callout } from "@/components/callout";
 import { TagGroup } from "@/components/tag-group";
 import { useStatusBarStyle } from "@/hooks/use-status-bar-style";
 
@@ -170,6 +171,13 @@ export default function Community() {
 				colors={["#C9E2C9", "rgba(243, 247, 244, 0)"]}
 				className="absolute top-0 left-0 h-64 w-full opacity-80"
 			/>
+			{selectedMarker && (
+				<Callout
+					title={selectedMarker.title || ""}
+					distance="0.5 km"
+					confirmationsCount={10}
+				/>
+			)}
 			<BottomSheet
 				ref={bottomSheetRef}
 				snapPoints={["40%"]}
