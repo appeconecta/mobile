@@ -22,8 +22,13 @@ import { RippleButton } from "@/components/ui/ripple-button";
 
 // Data
 import { steps } from "@/constants/onboarding";
+import { useStatusBarStyle } from "@/hooks/use-status-bar-style";
+import { getToken } from "@/lib/auth";
+import Toast from "react-native-toast-message";
 
 export default function SignIn() {
+	useStatusBarStyle("dark");
+
 	const { signIn } = useSession();
 	const { width } = useWindowDimensions();
 
@@ -44,10 +49,17 @@ export default function SignIn() {
 
 	const login = useCallback(async () => {
 		try {
-			await signIn();
+			const token = await getToken();
+			await signIn(token);
 			router.replace("/");
 		} catch (error) {
 			console.error("Error during sign-in:", error);
+			Toast.show({
+				type: "error",
+				text1: "Erro ao entrar",
+				text2: "Não foi possível entrar com o Google. Tente novamente.",
+				position: "bottom",
+			});
 		}
 	}, [signIn]);
 
