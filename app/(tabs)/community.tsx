@@ -48,9 +48,9 @@ export default function Community() {
 	);
 
 	const filterTags = [
-		{ id: 'lixo', name: 'Focos de Lixo' },
-		{ id: 'coleta', name: 'Pontos de Coleta' },
-		{ id: 'lixeiras', name: 'Lixeiras' },
+		{ id: "lixo", name: "Focos de Lixo" },
+		{ id: "coleta", name: "Pontos de Coleta" },
+		{ id: "lixeiras", name: "Lixeiras" },
 	];
 
 	const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
@@ -126,6 +126,7 @@ export default function Community() {
 					tags={filterTags}
 					selected={selectedFilters}
 					onSelect={setSelectedFilters}
+					unique={true}
 				/>
 			</View>
 			{/* Gradient for header readability */}

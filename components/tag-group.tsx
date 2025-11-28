@@ -45,6 +45,7 @@ export function TagGroup({ className, tags, selected, onSelect, unique = false }
 					name={tag.name}
 					selected={selected.includes(tag.id)}
 					onPress={() => handlePress(tag.id)}
+					multiSelect={!unique}
 				/>
 			))}
 		</ScrollView>
