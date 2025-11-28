@@ -1,10 +1,12 @@
+import { router } from "expo-router";
 import { Alert, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useSubmitForm } from "./_layout";
 
 export default function SubmitFormStep4() {
 	const insets = useSafeAreaInsets();
-	const { photos, photosBase64, tags, description, setDescription, resetForm } = useSubmitForm();
+	const { photos, photosBase64, tags, description, setDescription, resetForm, onSubmit } =
+		useSubmitForm();
 
 	async function handleSubmit() {
 		try {
@@ -15,9 +17,14 @@ export default function SubmitFormStep4() {
 				description,
 			});
 			await Promise.all([]);
-			// await submitReport({ photos, photosBase64, tags, description });
+			await onSubmit();
 			resetForm();
-			Alert.alert("Sucesso", "Relatório enviado com sucesso.");
+			Alert.alert("Sucesso", "Relatório enviado com sucesso.", [
+				{
+					text: "OK",
+					onPress: () => router.push("/"),
+				},
+			]);
 		} catch (e) {
 			console.error(e);
 			Alert.alert("Erro", "Falha ao enviar relatório. Tente novamente.");

@@ -2,7 +2,7 @@ import { useImage } from "expo-image";
 import { GoogleMaps } from "expo-maps";
 import { styled } from "nativewind";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Pressable, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Pressable, Share, Text, TextInput, TouchableOpacity, View } from "react-native";
 import Animated, {
 	cancelAnimation,
 	FadeIn,
@@ -111,17 +111,28 @@ export default function Community() {
 		marker2: useImage(markerIcons.marker2),
 	} as const;
 
-	const renderedMarkers = useMemo(
-		() =>
-			markerConfigs.map((marker) => {
-				const icon = markerIconRefs[marker.iconName];
-				return icon ? { ...marker, icon } : marker;
-			}),
-		[]
-	);
-
 	const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
 	const [selectedMarker, setSelectedMarker] = useState<GoogleMapsMarker | null>(null);
+	const [searchText, setSearchText] = useState("");
+
+	const renderedMarkers = useMemo(() => {
+		const filteredConfigs = markerConfigs.filter((marker) => {
+			const matchesFilter =
+				selectedFilters.length === 0 ||
+				selectedFilters.some((filter) => {
+					if (filter === "lixo") return marker.iconName === "marker1";
+					if (filter === "coleta") return marker.iconName === "marker2";
+					return false;
+				});
+			const matchesSearch =
+				!searchText || marker.snippet?.toLowerCase().includes(searchText.toLowerCase());
+			return matchesFilter && matchesSearch;
+		});
+		return filteredConfigs.map((marker) => {
+			const icon = markerIconRefs[marker.iconName];
+			return icon ? { ...marker, icon } : marker;
+		});
+	}, [selectedFilters, searchText, markerIconRefs]);
 
 	const mapRef = useRef<GoogleMaps.MapView>(null);
 	const bottomSheetRef = useRef<BottomSheetModal>(null);
@@ -152,6 +163,12 @@ export default function Community() {
 		if (!sheet) return;
 		sheet.dismiss();
 	}, []);
+
+	const openShare = () => {
+		Share.share({
+			message: 'Confira este ponto de lixo que encontrei no app "econecta"!',
+		});
+	};
 
 	return (
 		<View
@@ -229,6 +246,8 @@ export default function Community() {
 					<TextInput
 						className="bg-bg-100 text-primary-600 font-regular w-full rounded-full py-3 pl-12 text-base placeholder:text-[#A3A3A3]"
 						placeholder="Pesquisar por focos de lixo e muito mais..."
+						value={searchText}
+						onChangeText={setSearchText}
 					/>
 					<StyledSearchIcon
 						className="fill-border-primary absolute top-1/2 left-4 -translate-y-1/2"
@@ -323,6 +342,7 @@ export default function Community() {
 						<TouchableOpacity
 							activeOpacity={0.8}
 							className="border-primary-200 flex flex-row items-center justify-center gap-2 rounded-full border px-4 py-2"
+							onPress={openShare}
 						>
 							<StyledShareIcon width={16} height={16} className="fill-primary-200" />
 							<Text className="text-primary-200 text-base font-bold">
@@ -333,7 +353,7 @@ export default function Community() {
 					{/* Images */}
 					<View className="px-6">
 						<Image
-							source={"https://i.imgur.com/d8G9K7p.jpeg"}
+							source={"https://i.imgur.com/ePzmUuH.jpeg"}
 							className="h-36 w-full self-center rounded-md"
 						/>
 					</View>
